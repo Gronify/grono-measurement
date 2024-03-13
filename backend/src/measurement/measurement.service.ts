@@ -4,15 +4,14 @@ const fetch = require('node-fetch');
 
 @Injectable()
 export class MeasurementService {
-  async getMeasurement(config = null): Promise<string> {
-    const url = 'https://www.google.com.ua/';
-    // https://vbd.org.ua/ https://www.google.com.ua/
+  async getMeasurement(url: string): Promise<any> {
     const options = {
-      logLevel: 'info',
+      logLevel: 'error',
       disableDeviceEmulation: true,
       chromeFlags: ['--disable-mobile-emulation'],
       port: 0,
     };
+
     // Launch chrome using chrome-launcher
     const chromeLauncher = await (eval(
       `import('chrome-launcher')`,
@@ -34,7 +33,7 @@ export class MeasurementService {
     // Run Lighthouse
     const lighthouse = await (eval(`import('lighthouse')`) as Promise<any>);
 
-    const { lhr } = await lighthouse.default(url, options, config);
+    const { lhr } = await lighthouse.default(url, options, null);
     await browser.disconnect();
     await chrome.kill();
     const reportGenerator = await (eval(
@@ -56,19 +55,32 @@ export class MeasurementService {
     const timeToInteractive = lhr.audits['interactive'].numericValue;
     const metrics = lhr.audits['metrics'].numericValue;
 
-    console.log(`\n
-         Lighthouse metrics:
-         🎨 First Contentful Paint: ${firstContentfulPaint},
-         🎨 Largest Contentful Paint: ${largestContentfulPaint},
-         🎨 first-meaningful-paint: ${firstMeaningfulPaint},
-         🎨 speed-index: ${speedIndex},
-         ⌛️ Total Blocking Time: ${totalBlockingTime},
-         ⌛️ max-potential-fid: ${maxPotentialFid},
-         ⌛️ cumulative-layout-shift: ${cumulativeLayoutShift},
-         ⌛️ server-response-time(TTFB): ${serverResponseTime},
-         👆 Time To Interactive: ${timeToInteractive}),
-         👆 Collects all available metrics: ${metrics}`);
+    // console.log(`\n
+    //      Lighthouse metrics:
+    //      🎨 First Contentful Paint: ${firstContentfulPaint},
+    //      🎨 Largest Contentful Paint: ${largestContentfulPaint},
+    //      🎨 first-meaningful-paint: ${firstMeaningfulPaint},
+    //      🎨 speed-index: ${speedIndex},
+    //      ⌛️ Total Blocking Time: ${totalBlockingTime},
+    //      ⌛️ max-potential-fid: ${maxPotentialFid},
+    //      ⌛️ cumulative-layout-shift: ${cumulativeLayoutShift},
+    //      ⌛️ server-response-time(TTFB): ${serverResponseTime},
+    //      👆 Time To Interactive: ${timeToInteractive},
+    //      👆 Collects all available metrics: ${metrics}`);
 
-    return lhr;
+    const res = {
+      firstContentfulPaint: firstContentfulPaint,
+      largestContentfulPaint: largestContentfulPaint,
+      firstMeaningfulPaint: firstMeaningfulPaint,
+      speedIndex: speedIndex,
+      totalBlockingTime: totalBlockingTime,
+      maxPotentialFid: maxPotentialFid,
+      cumulativeLayoutShift: cumulativeLayoutShift,
+      serverResponseTime: serverResponseTime,
+      timeToInteractive: timeToInteractive,
+      metrics: metrics,
+    };
+
+    return res;
   }
 }
