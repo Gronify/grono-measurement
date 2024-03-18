@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  backend:
+    container_name: backend
+    image: backend
+    mem_limit: 0.5GB
+    build:
+      context: ./backend
+      target: development
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    networks:
+      - app-network
+    command: npm run start:dev
+    restart: unless-stopped
+  frontend:
+    container_name: frontend
+    image: frontend
+    mem_limit: 0.5GB
+    build:
+      context: ./frontend
+      target: runner
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - ${APP_PORT_DEVELOPMENT}:${APP_PORT_DEVELOPMENT}
+    command: npm run dev
+    restart: unless-stopped
+
+networks:
+  app-network:

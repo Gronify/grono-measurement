@@ -6,9 +6,17 @@ const fetch = require('node-fetch');
 export class MeasurementService {
   async getMeasurement(url: string): Promise<any> {
     const options = {
-      logLevel: 'error',
+      headless: true,
+      args: ['--no-sandbox'],
+      logLevel: 'info',
       disableDeviceEmulation: true,
-      chromeFlags: ['--disable-mobile-emulation'],
+      chromeFlags: [
+        '--disable-mobile-emulationm',
+        '--no-first-run',
+        '--headless',
+        '--disable-gpu',
+        '--no-sandbox',
+      ],
       port: 0,
     };
 
