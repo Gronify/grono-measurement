@@ -9,6 +9,7 @@ RUN  npm install --production
 FROM node:20.11.1-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
+# COPY public ./public
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
@@ -30,4 +31,4 @@ COPY --from=builder /app/package.json ./package.json
 
 USER nextjs
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]

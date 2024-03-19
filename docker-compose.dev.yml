@@ -4,7 +4,7 @@ services:
   backend:
     container_name: backend
     image: backend
-    mem_limit: 0.5GB
+    mem_limit: 2GB
     build:
       context: ./backend
       target: development
@@ -12,6 +12,9 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
     networks:
@@ -24,12 +27,16 @@ services:
     mem_limit: 0.5GB
     build:
       context: ./frontend
-      target: runner
+      target: deps
       dockerfile: ./Dockerfile
     volumes:
       - ./frontend:/app
       - /app/node_modules
-      - /app/.next
+      - ./frontend/.next:/app/.next
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+
     ports:
       - ${APP_PORT_DEVELOPMENT}:${APP_PORT_DEVELOPMENT}
     command: npm run dev

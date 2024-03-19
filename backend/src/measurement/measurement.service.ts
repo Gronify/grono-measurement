@@ -1,21 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
 const fetch = require('node-fetch');
+import defaultConfig from '../../lighthouse-config';
 
 @Injectable()
 export class MeasurementService {
   async getMeasurement(url: string): Promise<any> {
     const options = {
       headless: true,
-      args: ['--no-sandbox'],
+      // args: ['--no-sandbox'],
       logLevel: 'info',
-      disableDeviceEmulation: true,
+      disableDeviceEmulation: false,
       chromeFlags: [
-        '--disable-mobile-emulationm',
+        // '--disable-mobile-emulation',
         '--no-first-run',
         '--headless',
         '--disable-gpu',
         '--no-sandbox',
+        '--disable-dev-shm-usage',
       ],
       port: 0,
     };
@@ -39,14 +41,52 @@ export class MeasurementService {
       browserWSEndpoint: resp.webSocketDebuggerUrl,
     });
     // Run Lighthouse
-    const lighthouse = await (eval(`import('lighthouse')`) as Promise<any>);
 
-    const { lhr } = await lighthouse.default(url, options, null);
+    const lighthouse = await (eval(`import('lighthouse')`) as Promise<any>);
+    const chromeKillTimeout = setTimeout(() => {
+      chrome.kill();
+    }, 120000);
+
+    const { lhr } = await lighthouse.default(
+      url,
+      {
+        port: options.port,
+        logLevel: 'info',
+        disableDeviceEmulation: true,
+        debugNavigation: false,
+        disableFullPageScreenshot: true,
+
+        // auditMode: true,
+        // gatherMode: true,
+        usePassiveGathering: true,
+      },
+      {
+        extends: 'lighthouse:default',
+        settings: {
+          onlyAudits: [
+            'first-contentful-paint',
+            'first-meaningful-paint',
+            'largest-contentful-paint',
+            'first-meaningful-paint',
+            'speed-index',
+            'total-blocking-time',
+            'max-potential-fid',
+            'cumulative-layout-shift',
+            'server-response-time',
+            'interactive',
+            'metrics',
+          ],
+          onlyCategories: ['performance'],
+          emulatedFormFactor: 'desktop',
+        },
+      },
+    );
     await browser.disconnect();
     await chrome.kill();
-    const reportGenerator = await (eval(
-      `import('lighthouse/report/generator/report-generator.js')`,
-    ) as Promise<any>);
+    clearTimeout(chromeKillTimeout);
+    // const reportGenerator = await (eval(
+    //   `import('lighthouse/report/generator/report-generator.js')`,
+    // ) as Promise<any>);
 
     const firstContentfulPaint =
       lhr.audits['first-contentful-paint'].numericValue;
@@ -63,18 +103,7 @@ export class MeasurementService {
     const timeToInteractive = lhr.audits['interactive'].numericValue;
     const metrics = lhr.audits['metrics'].numericValue;
 
-    // console.log(`\n
-    //      Lighthouse metrics:
-    //      🎨 First Contentful Paint: ${firstContentfulPaint},
-    //      🎨 Largest Contentful Paint: ${largestContentfulPaint},
-    //      🎨 first-meaningful-paint: ${firstMeaningfulPaint},
-    //      🎨 speed-index: ${speedIndex},
-    //      ⌛️ Total Blocking Time: ${totalBlockingTime},
-    //      ⌛️ max-potential-fid: ${maxPotentialFid},
-    //      ⌛️ cumulative-layout-shift: ${cumulativeLayoutShift},
-    //      ⌛️ server-response-time(TTFB): ${serverResponseTime},
-    //      👆 Time To Interactive: ${timeToInteractive},
-    //      👆 Collects all available metrics: ${metrics}`);
+    console.log('Success');
 
     const res = {
       firstContentfulPaint: firstContentfulPaint,
