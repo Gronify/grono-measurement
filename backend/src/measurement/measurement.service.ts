@@ -8,13 +8,13 @@ export class MeasurementService {
   async getMeasurement(url: string): Promise<any> {
     const options = {
       headless: true,
-      // args: ['--no-sandbox'],
+      args: ['--no-sandbox'],
       logLevel: 'info',
-      disableDeviceEmulation: false,
+      disableDeviceEmulation: true,
       chromeFlags: [
-        // '--disable-mobile-emulation',
+        '--emulated-form-factor=desktop',
         '--no-first-run',
-        '--headless',
+        // '--headless',
         '--disable-gpu',
         '--no-sandbox',
         '--disable-dev-shm-usage',
@@ -77,7 +77,25 @@ export class MeasurementService {
             'metrics',
           ],
           onlyCategories: ['performance'],
-          emulatedFormFactor: 'desktop',
+          emulatedFormFactor: 'none',
+          formFactor: 'desktop',
+          throttling: {
+            rttMs: 40,
+            throughputKbps: 10240,
+            cpuSlowdownMultiplier: 1,
+            requestLatencyMs: 0,
+            downloadThroughputKbps: 0,
+            uploadThroughputKbps: 0,
+          },
+          screenEmulation: {
+            mobile: false,
+            width: 1350,
+            height: 940,
+            deviceScaleFactor: 1,
+            disabled: false,
+          },
+          emulatedUserAgent:
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4143.7 Safari/537.36 Chrome-Lighthouse',
         },
       },
     );
