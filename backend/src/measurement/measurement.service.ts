@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
+import { MeasurementDto } from './dto/measurement.dto';
 const fetch = require('node-fetch');
-import defaultConfig from '../../lighthouse-config';
+// import defaultConfig from '../../lighthouse-config';
 
 @Injectable()
 export class MeasurementService {
-  async getMeasurement(url: string): Promise<any> {
+  async getMeasurement(url: string): Promise<MeasurementDto> {
     const options = {
       headless: true,
       args: ['--no-sandbox'],
@@ -34,14 +35,13 @@ export class MeasurementService {
     const url1 = `http://localhost:${options.port}/json/version`;
     const response = await fetch(url1);
     const data = await response.json();
-
     const resp = data;
 
     const browser = await puppeteer.connect({
       browserWSEndpoint: resp.webSocketDebuggerUrl,
     });
-    // Run Lighthouse
 
+    // Run Lighthouse
     const lighthouse = await (eval(`import('lighthouse')`) as Promise<any>);
     const chromeKillTimeout = setTimeout(() => {
       chrome.kill();
@@ -102,9 +102,6 @@ export class MeasurementService {
     await browser.disconnect();
     await chrome.kill();
     clearTimeout(chromeKillTimeout);
-    // const reportGenerator = await (eval(
-    //   `import('lighthouse/report/generator/report-generator.js')`,
-    // ) as Promise<any>);
 
     const firstContentfulPaint =
       lhr.audits['first-contentful-paint'].numericValue;
