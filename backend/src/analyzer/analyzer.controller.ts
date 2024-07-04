@@ -11,29 +11,29 @@ export class AnalyzerController {
     @Query()
     query: {
       url: string;
-      fcp: number;
-      lcp: number;
-      fmp: number;
-      si: number;
-      tbt: number;
-      mpf: number;
-      cls: number;
-      srt: number;
-      tti: number;
-      m: number;
+      fcp: string;
+      lcp: string;
+      fmp: string;
+      si: string;
+      tbt: string;
+      mpf: string;
+      cls: string;
+      srt: string;
+      tti: string;
+      m: string;
     },
   ): Promise<any> {
     const weights: WeightsAnalyzerDto = {
-      firstContentfulPaint: query.fcp,
-      largestContentfulPaint: query.lcp,
-      firstMeaningfulPaint: query.fmp,
-      speedIndex: query.si,
-      totalBlockingTime: query.tbt,
-      maxPotentialFid: query.mpf,
-      cumulativeLayoutShift: query.cls,
-      serverResponseTime: query.srt,
-      timeToInteractive: query.tti,
-      metrics: query.m,
+      firstContentfulPaint: parseFloat(query.fcp as any as string),
+      largestContentfulPaint: parseFloat(query.lcp as any as string),
+      firstMeaningfulPaint: parseFloat(query.fmp as any as string),
+      speedIndex: parseFloat(query.si as any as string),
+      totalBlockingTime: parseFloat(query.tbt as any as string),
+      maxPotentialFid: parseFloat(query.mpf as any as string),
+      cumulativeLayoutShift: parseFloat(query.cls as any as string),
+      serverResponseTime: parseFloat(query.srt as any as string),
+      timeToInteractive: parseFloat(query.tti as any as string),
+      metrics: parseFloat(query.m as any as string),
     };
 
     return await this.analyzerService.getAnalyze(query.url, weights);

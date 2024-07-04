@@ -43,16 +43,16 @@ export default function Home() {
   };
   function send(url: string, weights: any) {
     const weightsForRequest = {
-      fcp: weights.firstContentfulPaint,
-      lcp: weights.largestContentfulPaint,
-      fmp: weights.firstMeaningfulPaint,
-      si: weights.speedIndex,
-      tbt: weights.totalBlockingTime,
-      mpf: weights.maxPotentialFid,
-      cls: weights.cumulativeLayoutShift,
-      srt: weights.serverResponseTime,
-      tti: weights.timeToInteractive,
-      m: weights.metrics
+      fcp: parseFloat(weights.firstContentfulPaint),
+      lcp: parseFloat(weights.largestContentfulPaint),
+      fmp: parseFloat(weights.firstMeaningfulPaint),
+      si: parseFloat(weights.speedIndex),
+      tbt: parseFloat(weights.totalBlockingTime),
+      mpf: parseFloat(weights.maxPotentialFid),
+      cls: parseFloat(weights.cumulativeLayoutShift),
+      srt: parseFloat(weights.serverResponseTime),
+      tti: parseFloat(weights.timeToInteractive),
+      m: parseFloat(weights.metrics)
     }
     axios.get("http://localhost:5000/analyzer", {
       params: { url: url, ...weightsForRequest },
