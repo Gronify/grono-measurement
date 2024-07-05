@@ -1,8 +1,37 @@
 
 'use client'
 import axios from "axios";
+import moment from "moment";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+interface IHistory {
+  id: string;
+  url: string;
+  firstContentfulPaint: number;
+  largestContentfulPaint: number;
+  firstMeaningfulPaint: number;
+  speedIndex: number;
+  totalBlockingTime: number;
+  maxPotentialFid: number;
+  cumulativeLayoutShift: number;
+  serverResponseTime: number;
+  timeToInteractive: number;
+  metrics: number;
+  analyzeScore: number;
+  weightFirstContentfulPaint: number;
+  weightLargestContentfulPaint: number;
+  weightFirstMeaningfulPaint: number;
+  weightSpeedIndex: number;
+  weightTotalBlockingTime: number;
+  weightMaxPotentialFid: number;
+  weightCumulativeLayoutShift: number;
+  weightServerResponseTime: number;
+  weightTimeToInteractive: number;
+  weightMetrics: number;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export default function Home() {
   const [url, setUrl] = useState('')
@@ -33,6 +62,8 @@ export default function Home() {
       metrics: 0
     }
   })
+  const [history, setHistory] = useState<IHistory[]>([])
+
   const handleChange = (prop: any) => (event: any) => {
     setUrl(event.target.value);
   };
@@ -41,6 +72,16 @@ export default function Home() {
     // dispatch(humanUpdateAction({ ...human, [prop]: event.target.value }))
     setWeights({ ...weights, [prop]: event.target.value });
   };
+
+  const updateHistory = () => {
+    axios.get("http://localhost:5000/analyzer/analyzes", {
+      params: { limit: 10 },
+    }
+    ).then((response: any) => {
+      setHistory(response.data)
+    })
+  }
+
   function send(url: string, weights: any) {
     const weightsForRequest = {
       fcp: parseFloat(weights.firstContentfulPaint),
@@ -59,9 +100,19 @@ export default function Home() {
     }
     ).then((response: any) => {
       setData(response.data)
+      updateHistory()
     })
 
+
   }
+
+  useEffect(() => {
+    updateHistory()
+  }, [])
+
+
+
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
@@ -182,8 +233,41 @@ export default function Home() {
             </table>
           </div>
 
+
+
+
         </div>
       </div>
+      <div className="mx-auto mt-4">
+        <table className="w-full bg-white border rounded-lg">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="px-4 py-2 text-gray-600 font-bold border">URL</th>
+              <th className="px-4 py-2 text-gray-600 font-bold border">Score</th>
+              <th className="px-4 py-2 text-gray-600 font-bold border">Timestamp</th>
+              <th className="px-4 py-2 text-gray-600 font-bold border">Compare</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              history.map((analysis) => {
+                return (
+                  <tr>
+                    <td className="px-4 py-2 border">{analysis.url}</td>
+                    <td className="px-4 py-2 border">{analysis.analyzeScore}</td>
+                    <td className="px-4 py-2 border">{moment(analysis.createdAt).format('DD.MM.YYYY hh:mm:ss')}</td>
+                    <td className="px-4 py-2 border flex align-center">
+                      <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Compare</button>
+                      <button type="button" className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Delete</button>
+                    </td>
+                  </tr>
+                )
+              })
+            }
+          </tbody>
+        </table>
+      </div>
     </main>
+
   );
 }

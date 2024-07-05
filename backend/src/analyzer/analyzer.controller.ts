@@ -38,4 +38,14 @@ export class AnalyzerController {
 
     return await this.analyzerService.getAnalyze(query.url, weights);
   }
+
+  @Get('analyzes')
+  async getAnalyzes(
+    @Query()
+    query: {
+      limit: string;
+    },
+  ): Promise<any> {
+    return await this.analyzerService.getAnalyzes(parseInt(query.limit));
+  }
 }

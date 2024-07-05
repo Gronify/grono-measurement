@@ -15,7 +15,7 @@ export class MeasurementService {
       chromeFlags: [
         '--emulated-form-factor=desktop',
         '--no-first-run',
-        // '--headless',
+        '--headless',
         '--disable-gpu',
         '--no-sandbox',
         '--disable-dev-shm-usage',

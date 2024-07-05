@@ -65,4 +65,20 @@ export class AnalyzerService {
 
     return { analyzeScore: analyzeScore, measurement: measurement };
   }
+
+  async getAnalyzes(limit: number) {
+    try {
+      const analyzes = await this.prisma.analyze.findMany({
+        take: limit,
+        orderBy: {
+          createdAt: 'asc',
+        },
+      });
+      return analyzes;
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') throw new BadRequestException('taken');
+      }
+    }
+  }
 }
