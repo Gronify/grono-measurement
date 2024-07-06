@@ -71,7 +71,7 @@ export class AnalyzerService {
       const analyzes = await this.prisma.analyze.findMany({
         take: limit,
         orderBy: {
-          createdAt: 'asc',
+          createdAt: 'desc',
         },
       });
       return analyzes;
