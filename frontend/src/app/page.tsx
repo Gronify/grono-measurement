@@ -100,7 +100,7 @@ export default function Home() {
   const updateHistory = () => {
     axios
       .get("http://localhost:5000/analyzer/analyzes", {
-        params: { limit: 10 },
+        params: { limit: 20 },
       })
       .then((response: any) => {
         setHistory(response.data);
@@ -159,7 +159,11 @@ export default function Home() {
       "rgba(255, 205, 86, 1)",
       "rgba(54, 162, 235, 1)",
       "rgba(153, 102, 255, 1)",
-      "rgba(201, 203, 207, 1)",
+      "rgba(255, 0, 234, 1)",
+      "rgba(40, 199, 154, 1)",
+      "rgba(255, 0, 43, 1)",
+      "rgba(255, 247, 0, 1)",
+      "rgba(0, 255, 60, 1)",
     ];
     const chartDataset = compareList.map((analysis, index) => {
       return {
@@ -520,6 +524,13 @@ export default function Home() {
           </thead>
           <tbody>
             {history.map((analysis) => {
+              let filteredCompareList = compareList.filter(
+                (record) => record.id == analysis.id
+              );
+              let addButton = false;
+              if (JSON.stringify(filteredCompareList) == JSON.stringify([])) {
+                addButton = true;
+              }
               return (
                 <tr>
                   <td className="px-4 py-2 border">{analysis.url}</td>
@@ -527,21 +538,25 @@ export default function Home() {
                   <td className="px-4 py-2 border">
                     {moment(analysis.createdAt).format("DD.MM.YYYY hh:mm:ss")}
                   </td>
+
                   <td className="px-4 py-2 border flex align-center">
-                    <button
-                      type="button"
-                      className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                      onClick={() => handleAddToCompare(analysis.id)}
-                    >
-                      Compare
-                    </button>
-                    <button
-                      type="button"
-                      className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                      onClick={() => handleDeleteFromCompare(analysis.id)}
-                    >
-                      Delete
-                    </button>
+                    {addButton ? (
+                      <button
+                        type="button"
+                        className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        onClick={() => handleAddToCompare(analysis.id)}
+                      >
+                        Compare
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                        onClick={() => handleDeleteFromCompare(analysis.id)}
+                      >
+                        Delete
+                      </button>
+                    )}
                   </td>
                 </tr>
               );
