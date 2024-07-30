@@ -1,0 +1,29 @@
+{
+    "page": {
+      "enter_url": "Ingrese URL:",
+  "submit": "Enviar",
+  "score": "Puntuación:",
+  "metric": "Métrica",
+  "value": "Valor",
+  "weights": "Pesos",
+  "firstContentfulPaint": "Primer Pintado con Contenido",
+  "largestContentfulPaint": "Mayor Pintado con Contenido",
+  "firstMeaningfulPaint": "Primer Pintado Significativo",
+  "speedIndex": "Índice de Velocidad",
+  "totalBlockingTime": "Tiempo Total de Bloqueo",
+  "maxPotentialFid": "Fid Potencial Máximo",
+  "cumulativeLayoutShift": "Desplazamiento Acumulativo del Diseño",
+  "serverResponseTime": "Tiempo de Respuesta del Servidor",
+  "timeToInteractive": "Tiempo para Interactividad",
+  "metrics": "Métricas",
+  "url": "URL",
+  "score_table": "Puntuación",
+  "timestamp": "Marca de tiempo",
+  "compare": "Comparar",
+  "compare_button": "Comparar",
+  "delete_button": "Eliminar",
+  "compare_chart": "Gráfico Comparativo",
+  "analyzeScore": "Analizar Puntuación",
+  "lower_better": "más bajo es mejor"
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "page": {
+     "enter_url": "输入网址：",
+  "submit": "提交",
+  "score": "得分：",
+  "metric": "指标",
+  "value": "值",
+  "weights": "权重",
+  "firstContentfulPaint": "首次内容绘制",
+  "largestContentfulPaint": "最大内容绘制",
+  "firstMeaningfulPaint": "首次有意义绘制",
+  "speedIndex": "速度指数",
+  "totalBlockingTime": "总阻塞时间",
+  "maxPotentialFid": "最大潜在Fid",
+  "cumulativeLayoutShift": "累计布局偏移",
+  "serverResponseTime": "服务器响应时间",
+  "timeToInteractive": "可交互时间",
+  "metrics": "指标",
+  "url": "网址",
+  "score_table": "得分",
+  "timestamp": "时间戳",
+  "compare": "比较",
+  "compare_button": "比较",
+  "delete_button": "删除",
+  "compare_chart": "比较图表",
+  "analyzeScore": "分析得分",
+  "lower_better": "越低越好"
+    }
+}

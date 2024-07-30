@@ -1,0 +1,29 @@
+{
+    "page": {
+      "enter_url": "Введіть URL:",
+  "submit": "Надіслати",
+  "score": "Оцінка:",
+  "metric": "Метрика",
+  "value": "Значення",
+  "weights": "Ваги",
+  "firstContentfulPaint": "Перший змістовний відгук",
+  "largestContentfulPaint": "Найбільший змістовний відгук",
+  "firstMeaningfulPaint": "Перший значущий відгук",
+  "speedIndex": "Індекс швидкості",
+  "totalBlockingTime": "Загальний час блокування",
+  "maxPotentialFid": "Максимальний потенційний Fid",
+  "cumulativeLayoutShift": "Кумулятивне зміщення макета",
+  "serverResponseTime": "Час відповіді сервера",
+  "timeToInteractive": "Час до взаємодії",
+  "metrics": "Метрики",
+  "url": "URL",
+  "score_table": "Оцінка",
+  "timestamp": "Мітка часу",
+  "compare": "Порівняти",
+  "compare_button": "Порівняти",
+  "delete_button": "Видалити",
+  "compare_chart": "Графік порівняння",
+  "analyzeScore": "Аналіз оцінки",
+  "lower_better": "нижче краще"
+    }
+}

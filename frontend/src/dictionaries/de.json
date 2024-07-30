@@ -1,0 +1,29 @@
+{
+    "page": {
+      "enter_url": "URL eingeben:",
+  "submit": "Einreichen",
+  "score": "Punktzahl:",
+  "metric": "Metrik",
+  "value": "Wert",
+  "weights": "Gewichte",
+  "firstContentfulPaint": "Erster inhaltlicher Anstrich",
+  "largestContentfulPaint": "Größter inhaltlicher Anstrich",
+  "firstMeaningfulPaint": "Erster bedeutungsvoller Anstrich",
+  "speedIndex": "Geschwindigkeitsindex",
+  "totalBlockingTime": "Gesamtblockierungszeit",
+  "maxPotentialFid": "Maximales potenzielles Fid",
+  "cumulativeLayoutShift": "Kumulativer Layout-Verschiebung",
+  "serverResponseTime": "Server-Antwortzeit",
+  "timeToInteractive": "Zeit bis zur Interaktivität",
+  "metrics": "Metriken",
+  "url": "URL",
+  "score_table": "Punktzahl",
+  "timestamp": "Zeitstempel",
+  "compare": "Vergleichen",
+  "compare_button": "Vergleichen",
+  "delete_button": "Löschen",
+  "compare_chart": "Vergleichsdiagramm",
+  "analyzeScore": "Punktzahl analysieren",
+  "lower_better": "niedriger ist besser"
+    }
+  }

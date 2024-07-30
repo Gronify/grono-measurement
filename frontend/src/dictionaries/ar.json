@@ -1,0 +1,29 @@
+{
+    "page": {
+      "enter_url": "أدخل URL:",
+  "submit": "إرسال",
+  "score": "النتيجة:",
+  "metric": "المقياس",
+  "value": "القيمة",
+  "weights": "الأوزان",
+  "firstContentfulPaint": "أول طلاء ذو محتوى",
+  "largestContentfulPaint": "أكبر طلاء ذو محتوى",
+  "firstMeaningfulPaint": "أول طلاء ذو معنى",
+  "speedIndex": "مؤشر السرعة",
+  "totalBlockingTime": "إجمالي وقت الحجب",
+  "maxPotentialFid": "أقصى قدر ممكن من Fid",
+  "cumulativeLayoutShift": "التغيير التراكمي في التخطيط",
+  "serverResponseTime": "وقت استجابة الخادم",
+  "timeToInteractive": "الوقت للتفاعل",
+  "metrics": "المقاييس",
+  "url": "URL",
+  "score_table": "النتيجة",
+  "timestamp": "الطابع الزمني",
+  "compare": "مقارنة",
+  "compare_button": "مقارنة",
+  "delete_button": "حذف",
+  "compare_chart": "مخطط المقارنة",
+  "analyzeScore": "تحليل النتيجة",
+  "lower_better": "أقل أفضل"
+    }
+}

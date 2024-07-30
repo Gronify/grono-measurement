@@ -1,0 +1,29 @@
+{
+    "page": {
+      "enter_url": "URL दर्ज करें:",
+  "submit": "जमा करें",
+  "score": "स्कोर:",
+  "metric": "मेट्रिक",
+  "value": "मूल्य",
+  "weights": "वजन",
+  "firstContentfulPaint": "पहली कंटेंटफुल पेंट",
+  "largestContentfulPaint": "सबसे बड़ी कंटेंटफुल पेंट",
+  "firstMeaningfulPaint": "पहली अर्थपूर्ण पेंट",
+  "speedIndex": "स्पीड इंडेक्स",
+  "totalBlockingTime": "कुल अवरोधन समय",
+  "maxPotentialFid": "अधिकतम संभावित FID",
+  "cumulativeLayoutShift": "संचयी लेआउट शिफ्ट",
+  "serverResponseTime": "सर्वर प्रतिक्रिया समय",
+  "timeToInteractive": "इंटरैक्टिव होने का समय",
+  "metrics": "मेट्रिक्स",
+  "url": "URL",
+  "score_table": "स्कोर",
+  "timestamp": "टाइमस्टैम्प",
+  "compare": "तुलना",
+  "compare_button": "तुलना",
+  "delete_button": "हटाएं",
+  "compare_chart": "तुलना चार्ट",
+  "analyzeScore": "स्कोर विश्लेषण करें",
+  "lower_better": "कम बेहतर"
+    }
+}
