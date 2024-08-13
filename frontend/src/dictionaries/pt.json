@@ -24,6 +24,7 @@
       "delete_button": "Excluir",
       "compare_chart": "Gráfico Comparativo",
       "analyzeScore": "Analisar Pontuação",
-      "lower_better": "mais baixo é melhor"
+      "lower_better": "mais baixo é melhor",
+      "progress": "Progresso da análise"
     }
 }

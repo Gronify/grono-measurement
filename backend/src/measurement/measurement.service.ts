@@ -1,16 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
 import { MeasurementDto } from './dto/measurement.dto';
+import { MeasurementGateway } from './measurement.gateway';
+import { Console } from 'console';
 const fetch = require('node-fetch');
+
 // import defaultConfig from '../../lighthouse-config';
 
 @Injectable()
 export class MeasurementService {
-  async getMeasurement(url: string): Promise<MeasurementDto> {
+  constructor(private gateway: MeasurementGateway) {}
+  async getMeasurement(url: string, clientId: string): Promise<MeasurementDto> {
     const options = {
       headless: true,
       args: ['--no-sandbox'],
-      logLevel: 'info',
+      logLevel: 'silent',
       disableDeviceEmulation: true,
       chromeFlags: [
         '--emulated-form-factor=desktop',
@@ -23,6 +27,20 @@ export class MeasurementService {
       port: 0,
     };
 
+    const lighthouseLogger = await (eval(
+      `import('lighthouse-logger')`,
+    ) as Promise<any>);
+
+    lighthouseLogger.default.level = 'verbose';
+
+    lighthouseLogger.default.events.removeAllListeners('status');
+    lighthouseLogger.default.events.on('status', (message) => {
+      const [title, ...argsArray] = message;
+      if (title === 'status') {
+        this.gateway.sendLog(clientId, argsArray[0]);
+      }
+    });
+
     // Launch chrome using chrome-launcher
     const chromeLauncher = await (eval(
       `import('chrome-launcher')`,
@@ -32,8 +50,8 @@ export class MeasurementService {
     options.port = chrome.port;
 
     // Connect chrome-launcher to puppeteer
-    const url1 = `http://localhost:${options.port}/json/version`;
-    const response = await fetch(url1);
+    const urlToAnalyze = `http://localhost:${options.port}/json/version`;
+    const response = await fetch(urlToAnalyze);
     const data = await response.json();
     const resp = data;
 
@@ -51,11 +69,10 @@ export class MeasurementService {
       url,
       {
         port: options.port,
-        logLevel: 'info',
+        logLevel: 'silent',
         disableDeviceEmulation: true,
         debugNavigation: false,
         disableFullPageScreenshot: true,
-
         // auditMode: true,
         // gatherMode: true,
         usePassiveGathering: true,
@@ -118,7 +135,7 @@ export class MeasurementService {
     const timeToInteractive = lhr.audits['interactive'].numericValue;
     const metrics = lhr.audits['metrics'].numericValue;
 
-    console.log('Success');
+    this.gateway.sendLog(clientId, 'Success!');
 
     const res = {
       firstContentfulPaint: firstContentfulPaint,

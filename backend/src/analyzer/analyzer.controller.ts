@@ -11,6 +11,7 @@ export class AnalyzerController {
     @Query()
     query: {
       url: string;
+      clientId :string;
       fcp: string;
       lcp: string;
       fmp: string;
@@ -36,7 +37,7 @@ export class AnalyzerController {
       metrics: parseFloat(query.m as any as string),
     };
 
-    return await this.analyzerService.getAnalyze(query.url, weights);
+    return await this.analyzerService.getAnalyze(query.url, weights, query.clientId);
   }
 
   @Get('analyzes')

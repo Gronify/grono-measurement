@@ -24,6 +24,7 @@
   "delete_button": "حذف",
   "compare_chart": "مخطط المقارنة",
   "analyzeScore": "تحليل النتيجة",
-  "lower_better": "أقل أفضل"
+  "lower_better": "أقل أفضل",
+      "progress": "تقدم التحليل"
     }
 }

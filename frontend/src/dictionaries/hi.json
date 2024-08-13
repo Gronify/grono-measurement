@@ -24,6 +24,7 @@
   "delete_button": "हटाएं",
   "compare_chart": "तुलना चार्ट",
   "analyzeScore": "स्कोर विश्लेषण करें",
-  "lower_better": "कम बेहतर"
+  "lower_better": "कम बेहतर",
+      "progress": "विश्लेषण प्रगति"
     }
 }

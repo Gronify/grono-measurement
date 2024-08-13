@@ -24,6 +24,7 @@
   "delete_button": "削除",
   "compare_chart": "比較チャート",
   "analyzeScore": "スコアを分析する",
-  "lower_better": "低いほど良い"
+  "lower_better": "低いほど良い",
+      "progress": "分析の進捗"
     }
 }

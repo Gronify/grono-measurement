@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import "chart.js/auto";
 import { Bar } from "react-chartjs-2";
+import io, { Socket } from 'socket.io-client';
 import { useDictionary } from "./components/dictionary-provider";
 import LanguageSwitcher from "./components/LanguageSwitcher";
 
@@ -40,8 +41,38 @@ interface IHistory {
   createdAt: string;
   updatedAt: string;
 }
+function getRandomNumber(max: number) {
+  return Math.floor(Math.random() * max);
+}
+
+const progressMapping: { [key: string]: number } = {
+  "Initialize config": 0,
+  "Connecting to browser": 5 + getRandomNumber(4),
+  "Preparing network conditions": 10 + getRandomNumber(4),
+  "Computing artifact: NetworkRecords": 15 + getRandomNumber(4),
+  "Getting artifact: DOMStats": 20 + getRandomNumber(4),
+  "Getting artifact: Scripts": 25 + getRandomNumber(4),
+  "Computing artifact: ProcessedNavigatio": 30 + getRandomNumber(4),
+  "Getting artifact: ViewportDimensions": 35 + getRandomNumber(4),
+  "Computing artifact: SpeedIndex": 40 + getRandomNumber(4),
+  "Computing artifact: TotalBlockingTime": 45 + getRandomNumber(4),
+  "Computing artifact: MaxPotentialFID": 50 + getRandomNumber(4),
+  "Computing artifact: UserTimings": 55 + getRandomNumber(4),
+  "Computing artifact: TimingSummary": 60 + getRandomNumber(4),
+  "Computing artifact: LCPImageRecord": 65 + getRandomNumber(4),
+  "Auditing: Avoid large layout shifts": 70 + getRandomNumber(4),
+  "Auditing: Minify CSS": 75 + getRandomNumber(4),
+  "Auditing: Efficiently encode images": 80 + getRandomNumber(4),
+  "Computing artifact: ImageRecords": 85 + getRandomNumber(4),
+  "Auditing: Use HTTP/2": 90 + getRandomNumber(4),
+  "Generating results...": 95 + getRandomNumber(4),
+  "Success!": 100,
+};
 
 export default function Home({ params: { locale } }: { params: { locale: string } }) {
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [lastMessage, setLastMessage] = useState<string>('');
+  const [progress, setProgress] = useState<number>(0);
   const dictionary = useDictionary()
   const [url, setUrl] = useState("");
   const [weights, setWeights] = useState({
@@ -111,7 +142,9 @@ export default function Home({ params: { locale } }: { params: { locale: string 
       });
   };
 
+
   function send(url: string, weights: any) {
+
     const weightsForRequest = {
       fcp: parseFloat(weights.firstContentfulPaint),
       lcp: parseFloat(weights.largestContentfulPaint),
@@ -124,19 +157,43 @@ export default function Home({ params: { locale } }: { params: { locale: string 
       tti: parseFloat(weights.timeToInteractive),
       m: parseFloat(weights.metrics),
     };
-    axios
-      .get("http://localhost:5000/analyzer", {
-        params: { url: url, ...weightsForRequest },
-      })
-      .then((response: any) => {
-        setData(response.data);
-        updateHistory();
-      });
+    if (socket) {
+
+      axios
+        .get("http://localhost:5000/analyzer", {
+          params: { url: url, ...weightsForRequest, clientId: socket.id },
+        })
+        .then((response: any) => {
+          setData(response.data);
+          updateHistory();
+        });
+    }
+
   }
 
   useEffect(() => {
     updateHistory();
+
+    const socketInstance = io('http://localhost:5000');
+    setSocket(socketInstance);
+
+    socketInstance.on('info', (message: string) => {
+      setLastMessage(message);
+
+      // Находим соответствующий прогресс для текущего сообщения
+      const matchedProgress = Object.keys(progressMapping).find(key =>
+        message.includes(key)
+      );
+
+      if (matchedProgress !== undefined) {
+        setProgress(progressMapping[matchedProgress]);
+      }
+    });
+    return () => {
+      socketInstance.disconnect();
+    };
   }, []);
+
 
   const chartOptions = {
     indexAxis: "y" as const,
@@ -250,6 +307,26 @@ export default function Home({ params: { locale } }: { params: { locale: string 
               >
                 {dictionary.page.submit}
               </button>
+            </div>
+            <div>
+
+              <div className="mt-2">
+                <h4>{dictionary.page.progress}:{lastMessage}</h4>
+                <div style={{
+                  width: '100%',
+                  backgroundColor: '#e0e0e0',
+                  borderRadius: '5px',
+                }}>
+                  <div style={{
+                    width: `${progress}%`,
+                    backgroundColor: '#76c7c0',
+                    height: '24px',
+                    borderRadius: '5px',
+                    transition: 'width 0.3s ease-in-out',
+                  }}></div>
+                </div>
+                <p>{progress.toFixed(0)}%</p>
+              </div>
             </div>
 
             <div className="overflow-x-auto">
