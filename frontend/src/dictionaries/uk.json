@@ -25,6 +25,7 @@
     "compare_chart": "Графік порівняння",
     "analyzeScore": "Аналіз оцінки",
     "lower_better": "нижче краще",
-    "progress": "Хід аналізу"
+    "progress": "Хід аналізу",
+    "analysis_history": "Історія аналізів"
   }
 }

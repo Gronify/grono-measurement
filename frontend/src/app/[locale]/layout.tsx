@@ -1,15 +1,16 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { i18n, Locale } from "@/i18n.config";
-import DictionaryProvider from "./components/dictionary-provider";
-import { getDictionary } from "./lib/dictionary";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { i18n, Locale } from '@/i18n.config';
+import { getDictionary } from '../../lib/dictionary';
+import { ThemeProvider } from '@/components/theme-provide';
+import DictionaryProvider from '@/components/dictionary-provider';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Webpage Performance Data",
-  description: "",
+  title: 'Webpage Performance Data',
+  description: '',
 };
 
 export function generateStaticParams() {
@@ -18,19 +19,24 @@ export function generateStaticParams() {
 
 export default async function RootLayout({
   children,
-  params
+  params,
 }: Readonly<{
   children: React.ReactNode;
   params: { locale: Locale };
 }>) {
-  const dictionary = await getDictionary(params.locale)
+  const dictionary = await getDictionary(params.locale);
   return (
-    <html lang={params.locale} >
-
+    <html lang={params.locale}>
       <body suppressHydrationWarning={true}>
-        <DictionaryProvider dictionary={dictionary}>
-          {children}
-        </DictionaryProvider></body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <DictionaryProvider dictionary={dictionary}>{children}</DictionaryProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

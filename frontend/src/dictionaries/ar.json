@@ -25,6 +25,7 @@
   "compare_chart": "مخطط المقارنة",
   "analyzeScore": "تحليل النتيجة",
   "lower_better": "أقل أفضل",
-      "progress": "تقدم التحليل"
+      "progress": "تقدم التحليل",
+      "analysis_history": "تاريخ التحليل"
     }
 }

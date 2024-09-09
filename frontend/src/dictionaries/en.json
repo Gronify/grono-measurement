@@ -25,6 +25,7 @@
       "compare_chart": "Compare Chart",
       "analyzeScore":"Analyze Score",
       "lower_better": "lower better",
-      "progress": "Analysis progress"
+      "progress": "Analysis progress",
+      "analysis_history": "Analysis history"
     }
 }

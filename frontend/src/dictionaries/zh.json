@@ -25,6 +25,7 @@
   "compare_chart": "比较图表",
   "analyzeScore": "分析得分",
   "lower_better": "越低越好",
-      "progress": "分析進度"
-    }
+    "progress": "分析進度",
+    "analysis_history": "分析历史"
+}
 }

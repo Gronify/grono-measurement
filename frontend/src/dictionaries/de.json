@@ -25,6 +25,7 @@
   "compare_chart": "Vergleichsdiagramm",
   "analyzeScore": "Punktzahl analysieren",
   "lower_better": "niedriger ist besser",
-      "progress": "Analysefortschritt"
+      "progress": "Analysefortschritt",
+      "analysis_history": "Analyseverlauf"
     }
   }

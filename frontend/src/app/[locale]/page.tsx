@@ -1,13 +1,30 @@
-"use client";
-import axios from "axios";
-import moment from "moment";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import "chart.js/auto";
-import { Bar } from "react-chartjs-2";
+'use client';
+import axios from 'axios';
+import moment from 'moment';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import 'chart.js/auto';
+import { Bar } from 'react-chartjs-2';
 import io, { Socket } from 'socket.io-client';
-import { useDictionary } from "./components/dictionary-provider";
-import LanguageSwitcher from "./components/LanguageSwitcher";
+import LanguageSwitcher from '../../components/LanguageSwitcher';
+import { useDictionary } from '@/components/dictionary-provider';
+import { ModeToggle } from '@/components/ModeToggle';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Send } from 'lucide-react';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Slider } from '@/components/ui/slider';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface IMeasurementChartDataset {
   label: string;
@@ -46,35 +63,35 @@ function getRandomNumber(max: number) {
 }
 
 const progressMapping: { [key: string]: number } = {
-  "Initialize config": 0,
-  "Connecting to browser": 5 + getRandomNumber(4),
-  "Preparing network conditions": 10 + getRandomNumber(4),
-  "Computing artifact: NetworkRecords": 15 + getRandomNumber(4),
-  "Getting artifact: DOMStats": 20 + getRandomNumber(4),
-  "Getting artifact: Scripts": 25 + getRandomNumber(4),
-  "Computing artifact: ProcessedNavigatio": 30 + getRandomNumber(4),
-  "Getting artifact: ViewportDimensions": 35 + getRandomNumber(4),
-  "Computing artifact: SpeedIndex": 40 + getRandomNumber(4),
-  "Computing artifact: TotalBlockingTime": 45 + getRandomNumber(4),
-  "Computing artifact: MaxPotentialFID": 50 + getRandomNumber(4),
-  "Computing artifact: UserTimings": 55 + getRandomNumber(4),
-  "Computing artifact: TimingSummary": 60 + getRandomNumber(4),
-  "Computing artifact: LCPImageRecord": 65 + getRandomNumber(4),
-  "Auditing: Avoid large layout shifts": 70 + getRandomNumber(4),
-  "Auditing: Minify CSS": 75 + getRandomNumber(4),
-  "Auditing: Efficiently encode images": 80 + getRandomNumber(4),
-  "Computing artifact: ImageRecords": 85 + getRandomNumber(4),
-  "Auditing: Use HTTP/2": 90 + getRandomNumber(4),
-  "Generating results...": 95 + getRandomNumber(4),
-  "Success!": 100,
+  'Initialize config': 0,
+  'Connecting to browser': 5 + getRandomNumber(4),
+  'Preparing network conditions': 10 + getRandomNumber(4),
+  'Computing artifact: NetworkRecords': 15 + getRandomNumber(4),
+  'Getting artifact: DOMStats': 20 + getRandomNumber(4),
+  'Getting artifact: Scripts': 25 + getRandomNumber(4),
+  'Computing artifact: ProcessedNavigatio': 30 + getRandomNumber(4),
+  'Getting artifact: ViewportDimensions': 35 + getRandomNumber(4),
+  'Computing artifact: SpeedIndex': 40 + getRandomNumber(4),
+  'Computing artifact: TotalBlockingTime': 45 + getRandomNumber(4),
+  'Computing artifact: MaxPotentialFID': 50 + getRandomNumber(4),
+  'Computing artifact: UserTimings': 55 + getRandomNumber(4),
+  'Computing artifact: TimingSummary': 60 + getRandomNumber(4),
+  'Computing artifact: LCPImageRecord': 65 + getRandomNumber(4),
+  'Auditing: Avoid large layout shifts': 70 + getRandomNumber(4),
+  'Auditing: Minify CSS': 75 + getRandomNumber(4),
+  'Auditing: Efficiently encode images': 80 + getRandomNumber(4),
+  'Computing artifact: ImageRecords': 85 + getRandomNumber(4),
+  'Auditing: Use HTTP/2': 90 + getRandomNumber(4),
+  'Generating results...': 95 + getRandomNumber(4),
+  'Success!': 100,
 };
 
 export default function Home({ params: { locale } }: { params: { locale: string } }) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [lastMessage, setLastMessage] = useState<string>('');
   const [progress, setProgress] = useState<number>(0);
-  const dictionary = useDictionary()
-  const [url, setUrl] = useState("");
+  const dictionary = useDictionary();
+  const [url, setUrl] = useState('');
   const [weights, setWeights] = useState({
     firstContentfulPaint: 0.55,
     largestContentfulPaint: 0.55,
@@ -115,26 +132,22 @@ export default function Home({ params: { locale } }: { params: { locale: string 
     `${dictionary.page.serverResponseTime} (${dictionary.page.lower_better})`,
     `${dictionary.page.timeToInteractive} (${dictionary.page.lower_better})`,
     `${dictionary.page.metrics} (${dictionary.page.lower_better})`,
-
   ]);
   const [compareList, setCompareList] = useState<IHistory[]>([]);
 
-  const [chartDataset, setChartDataset] = useState<IMeasurementChartDataset[]>(
-    []
-  );
+  const [chartDataset, setChartDataset] = useState<IMeasurementChartDataset[]>([]);
 
   const handleChange = (prop: any) => (event: any) => {
     setUrl(event.target.value);
   };
 
-  const handleRangeChange = (prop: any) => (event: any) => {
-    // dispatch(humanUpdateAction({ ...human, [prop]: event.target.value }))
-    setWeights({ ...weights, [prop]: event.target.value });
+  const handleRangeChange = (prop: any) => (value: any) => {
+    setWeights({ ...weights, [prop]: value });
   };
 
   const updateHistory = () => {
     axios
-      .get("http://localhost:5000/analyzer/analyzes", {
+      .get('http://localhost:5000/analyzer/analyzes', {
         params: { limit: 20 },
       })
       .then((response: any) => {
@@ -142,9 +155,7 @@ export default function Home({ params: { locale } }: { params: { locale: string 
       });
   };
 
-
   function send(url: string, weights: any) {
-
     const weightsForRequest = {
       fcp: parseFloat(weights.firstContentfulPaint),
       lcp: parseFloat(weights.largestContentfulPaint),
@@ -158,9 +169,8 @@ export default function Home({ params: { locale } }: { params: { locale: string 
       m: parseFloat(weights.metrics),
     };
     if (socket) {
-
       axios
-        .get("http://localhost:5000/analyzer", {
+        .get('http://localhost:5000/analyzer', {
           params: { url: url, ...weightsForRequest, clientId: socket.id },
         })
         .then((response: any) => {
@@ -168,7 +178,6 @@ export default function Home({ params: { locale } }: { params: { locale: string 
           updateHistory();
         });
     }
-
   }
 
   useEffect(() => {
@@ -181,9 +190,7 @@ export default function Home({ params: { locale } }: { params: { locale: string 
       setLastMessage(message);
 
       // Находим соответствующий прогресс для текущего сообщения
-      const matchedProgress = Object.keys(progressMapping).find(key =>
-        message.includes(key)
-      );
+      const matchedProgress = Object.keys(progressMapping).find(key => message.includes(key));
 
       if (matchedProgress !== undefined) {
         setProgress(progressMapping[matchedProgress]);
@@ -194,9 +201,8 @@ export default function Home({ params: { locale } }: { params: { locale: string 
     };
   }, []);
 
-
   const chartOptions = {
-    indexAxis: "y" as const,
+    indexAxis: 'y' as const,
     elements: {
       bar: {
         borderWidth: 2,
@@ -205,7 +211,7 @@ export default function Home({ params: { locale } }: { params: { locale: string 
     responsive: true,
     plugins: {
       legend: {
-        position: "right" as const,
+        position: 'right' as const,
       },
       title: {
         display: true,
@@ -216,15 +222,15 @@ export default function Home({ params: { locale } }: { params: { locale: string 
 
   const handleChartDataset = () => {
     const backgroundColorList = [
-      "rgba(255, 99, 132, 1)",
-      "rgba(255, 205, 86, 1)",
-      "rgba(54, 162, 235, 1)",
-      "rgba(153, 102, 255, 1)",
-      "rgba(255, 0, 234, 1)",
-      "rgba(40, 199, 154, 1)",
-      "rgba(255, 0, 43, 1)",
-      "rgba(255, 247, 0, 1)",
-      "rgba(0, 255, 60, 1)",
+      'rgba(255, 99, 132, 1)',
+      'rgba(255, 205, 86, 1)',
+      'rgba(54, 162, 235, 1)',
+      'rgba(153, 102, 255, 1)',
+      'rgba(255, 0, 234, 1)',
+      'rgba(40, 199, 154, 1)',
+      'rgba(255, 0, 43, 1)',
+      'rgba(255, 247, 0, 1)',
+      'rgba(0, 255, 60, 1)',
     ];
     const chartDataset = compareList.map((analysis, index) => {
       return {
@@ -242,7 +248,7 @@ export default function Home({ params: { locale } }: { params: { locale: string 
           analysis.timeToInteractive,
           analysis.metrics,
         ],
-        borderColor: "rgb(0, 0, 0, 0)",
+        borderColor: 'rgb(0, 0, 0, 0)',
         backgroundColor: backgroundColorList[index],
       };
     });
@@ -255,401 +261,221 @@ export default function Home({ params: { locale } }: { params: { locale: string 
   }, [compareList]);
 
   const handleAddToCompare = (id: string) => {
-    const indexOfAnalysisToAdd = history.findIndex(
-      (analysis) => analysis.id === id
-    );
-    let filteredCompareList = compareList.filter(
-      (analysis) => analysis.id == id
-    );
+    const indexOfAnalysisToAdd = history.findIndex(analysis => analysis.id === id);
+    let filteredCompareList = compareList.filter(analysis => analysis.id == id);
     if (JSON.stringify(filteredCompareList) == JSON.stringify([])) {
-      setCompareList((compareList) => [
-        ...compareList,
-        history[indexOfAnalysisToAdd],
-      ]);
+      setCompareList(compareList => [...compareList, history[indexOfAnalysisToAdd]]);
     }
   };
 
   const handleDeleteFromCompare = (id: string) => {
-    let filteredCompareList = compareList.filter(
-      (analysis) => analysis.id !== id
-    );
+    let filteredCompareList = compareList.filter(analysis => analysis.id !== id);
     setCompareList(filteredCompareList);
   };
 
+  const metricsTable = [
+    {
+      name: 'firstContentfulPaint',
+      title: dictionary.page.firstContentfulPaint,
+      measureValue: data.measurement.firstContentfulPaint,
+      weights: weights.firstContentfulPaint,
+    },
+    {
+      name: 'largestContentfulPaint',
+      title: dictionary.page.largestContentfulPaint,
+      measureValue: data.measurement.largestContentfulPaint,
+      weights: weights.largestContentfulPaint,
+    },
+    {
+      name: 'firstMeaningfulPaint',
+      title: dictionary.page.firstMeaningfulPaint,
+      measureValue: data.measurement.firstMeaningfulPaint,
+      weights: weights.firstMeaningfulPaint,
+    },
+    {
+      name: 'speedIndex',
+      title: dictionary.page.speedIndex,
+      measureValue: data.measurement.speedIndex,
+      weights: weights.speedIndex,
+    },
+    {
+      name: 'totalBlockingTime',
+      title: dictionary.page.totalBlockingTime,
+      measureValue: data.measurement.totalBlockingTime,
+      weights: weights.totalBlockingTime,
+    },
+    {
+      name: 'maxPotentialFid',
+      title: dictionary.page.maxPotentialFid,
+      measureValue: data.measurement.maxPotentialFid,
+      weights: weights.maxPotentialFid,
+    },
+    {
+      name: 'cumulativeLayoutShift',
+      title: dictionary.page.cumulativeLayoutShift,
+      measureValue: data.measurement.cumulativeLayoutShift,
+      weights: weights.cumulativeLayoutShift,
+    },
+    {
+      name: 'serverResponseTime',
+      title: dictionary.page.serverResponseTime,
+      measureValue: data.measurement.serverResponseTime,
+      weights: weights.serverResponseTime,
+    },
+    {
+      name: 'timeToInteractive',
+      title: dictionary.page.timeToInteractive,
+      measureValue: data.measurement.timeToInteractive,
+      weights: weights.timeToInteractive,
+    },
+    {
+      name: 'metrics',
+      title: dictionary.page.metrics,
+      measureValue: data.measurement.metrics,
+      weights: weights.metrics,
+    },
+  ];
+
   return (
     <>
-      <div className="flex justify-end m-6 mb-0">
+      <div className="flex justify-end m-6 mb-0 gap-2">
         <LanguageSwitcher locale={locale} />
+        <ModeToggle />
       </div>
-      <main className="flex min-h-screen flex-col items-center justify-between p-12">
-
-
-        <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-          <div className="max-w-xl mx-auto">
-            <label className="block text-gray-700 font-bold mb-2">
-              {dictionary.page.enter_url}
-            </label>
+      <main className="flex flex-col items-center justify-between">
+        <div className="w-full items-center justify-between font-mono text-sm flex">
+          <div className="md:w-[400px] mx-auto">
+            <Label htmlFor="url">{dictionary.page.enter_url}</Label>
             <div className="flex justify-center align-center gap-2 mb-4">
-              <input
-                type="text"
+              <Input
                 id="url"
-                name="url"
                 placeholder={dictionary.page.enter_url}
-                className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                 value={url}
-                onChange={handleChange("")}
-              />
-
-              <button
-                id="submitBtn"
-                className=" text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                onClick={() => send(url, weights)}
-              >
+                onChange={handleChange('')}
+              ></Input>
+              <Button onClick={() => send(url, weights)}>
+                <Send className="mr-2 h-4 w-4" />
                 {dictionary.page.submit}
-              </button>
+              </Button>
             </div>
             <div>
-
               <div className="mt-2">
-                <h4>{dictionary.page.progress}:{lastMessage}</h4>
-                <div style={{
-                  width: '100%',
-                  backgroundColor: '#e0e0e0',
-                  borderRadius: '5px',
-                }}>
-                  <div style={{
-                    width: `${progress}%`,
-                    backgroundColor: '#76c7c0',
-                    height: '24px',
+                <h4 className="text-nowrap">
+                  {dictionary.page.progress}:{lastMessage}
+                </h4>
+                <div
+                  style={{
+                    width: '100%',
+                    backgroundColor: '#e0e0e0',
                     borderRadius: '5px',
-                    transition: 'width 0.3s ease-in-out',
-                  }}></div>
+                  }}
+                >
+                  <div
+                    style={{
+                      width: `${progress}%`,
+                      backgroundColor: '#76c7c0',
+                      height: '24px',
+                      borderRadius: '5px',
+                      transition: 'width 0.3s ease-in-out',
+                    }}
+                  ></div>
                 </div>
                 <p>{progress.toFixed(0)}%</p>
               </div>
             </div>
-
-            <div className="overflow-x-auto">
-              <h1 className="font-bold text-xl text-center">
-                {dictionary.page.score} {data.analyzeScore}
-              </h1>
-              <table className="w-full bg-white border rounded-lg">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="px-4 py-2 text-gray-600 font-bold border">
-                      {dictionary.page.metric}
-                    </th>
-                    <th className="px-4 py-2 text-gray-600 font-bold border">
-                      {dictionary.page.value}
-                    </th>
-                    <th className="px-4 py-2 text-gray-600 font-bold border">
-                      {dictionary.page.weights}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="px-4 py-2 border">{dictionary.page.firstContentfulPaint}</td>
-                    <td className="px-4 py-2 border">
-                      {data.measurement.firstContentfulPaint}
-                    </td>
-                    <td className="px-4 py-2 border flex align-center">
-                      <label
-                        htmlFor="firstContentfulPaint"
-                        className="mb-2 text-sm font-medium text-gray-900 "
-                      >
-                        {weights.firstContentfulPaint}{" "}
-                      </label>
-                      <input
-                        type="range"
-                        id="firstContentfulPaint"
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        className="w-full h-2 m-2 bg-gray-200 rounded-lg appearance-none cursor-pointer "
-                        value={weights.firstContentfulPaint}
-                        onChange={handleRangeChange("firstContentfulPaint")}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2 border">{dictionary.page.largestContentfulPaint}</td>
-                    <td className="px-4 py-2 border">
-                      {data.measurement.largestContentfulPaint}
-                    </td>
-                    <td className="px-4 py-2 border  flex align-center">
-                      <label
-                        htmlFor="largestContentfulPaint"
-                        className="block mb-2 text-sm font-medium text-gray-900 "
-                      >
-                        {weights.largestContentfulPaint}{" "}
-                      </label>
-                      <input
-                        type="range"
-                        id="largestContentfulPaint"
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        className="w-full h-2 m-2 bg-gray-200 rounded-lg appearance-none cursor-pointer "
-                        value={weights.largestContentfulPaint}
-                        onChange={handleRangeChange("largestContentfulPaint")}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2 border">{dictionary.page.firstMeaningfulPaint}</td>
-                    <td className="px-4 py-2 border">
-                      {data.measurement.firstMeaningfulPaint}
-                    </td>
-                    <td className="px-4 py-2 border  flex align-center">
-                      <label
-                        htmlFor="firstMeaningfulPaint"
-                        className="block mb-2 text-sm font-medium text-gray-900 "
-                      >
-                        {weights.firstMeaningfulPaint}{" "}
-                      </label>
-                      <input
-                        type="range"
-                        id="firstMeaningfulPaint"
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        className="w-full h-2 m-2 bg-gray-200 rounded-lg appearance-none cursor-pointer "
-                        value={weights.firstMeaningfulPaint}
-                        onChange={handleRangeChange("firstMeaningfulPaint")}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2 border">{dictionary.page.speedIndex}</td>
-                    <td className="px-4 py-2 border">
-                      {data.measurement.speedIndex}
-                    </td>
-                    <td className="px-4 py-2 border flex align-center">
-                      <label
-                        htmlFor="speedIndex"
-                        className="block mb-2 text-sm font-medium text-gray-900 "
-                      >
-                        {weights.speedIndex}{" "}
-                      </label>
-                      <input
-                        type="range"
-                        id="speedIndex"
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        className="w-full h-2 m-2 bg-gray-200 rounded-lg appearance-none cursor-pointer "
-                        value={weights.speedIndex}
-                        onChange={handleRangeChange("speedIndex")}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2 border">{dictionary.page.totalBlockingTime}</td>
-                    <td className="px-4 py-2 border">
-                      {data.measurement.totalBlockingTime}
-                    </td>
-                    <td className="px-4 py-2 border flex align-center">
-                      <label
-                        htmlFor="totalBlockingTime"
-                        className="block mb-2 text-sm font-medium text-gray-900 "
-                      >
-                        {weights.totalBlockingTime}{" "}
-                      </label>
-                      <input
-                        type="range"
-                        id="totalBlockingTime"
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        className="w-full h-2 m-2 bg-gray-200 rounded-lg appearance-none cursor-pointer "
-                        value={weights.totalBlockingTime}
-                        onChange={handleRangeChange("totalBlockingTime")}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2 border">{dictionary.page.maxPotentialFid}</td>
-                    <td className="px-4 py-2 border">
-                      {data.measurement.maxPotentialFid}
-                    </td>
-                    <td className="px-4 py-2 border flex align-center">
-                      <label
-                        htmlFor="maxPotentialFid"
-                        className="block mb-2 text-sm font-medium text-gray-900 "
-                      >
-                        {weights.maxPotentialFid}{" "}
-                      </label>
-                      <input
-                        type="range"
-                        id="maxPotentialFid"
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        className="w-full h-2 m-2 bg-gray-200 rounded-lg appearance-none cursor-pointer "
-                        value={weights.maxPotentialFid}
-                        onChange={handleRangeChange("maxPotentialFid")}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2 border">{dictionary.page.cumulativeLayoutShift}</td>
-                    <td className="px-4 py-2 border">
-                      {data.measurement.cumulativeLayoutShift}
-                    </td>
-                    <td className="px-4 py-2 border flex align-center">
-                      <label
-                        htmlFor="cumulativeLayoutShift"
-                        className="block mb-2 text-sm font-medium text-gray-900 "
-                      >
-                        {weights.cumulativeLayoutShift}{" "}
-                      </label>
-                      <input
-                        type="range"
-                        id="cumulativeLayoutShift"
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        className="w-full h-2 m-2 bg-gray-200 rounded-lg appearance-none cursor-pointer "
-                        value={weights.cumulativeLayoutShift}
-                        onChange={handleRangeChange("cumulativeLayoutShift")}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2 border">{dictionary.page.serverResponseTime}</td>
-                    <td className="px-4 py-2 border">
-                      {data.measurement.serverResponseTime}
-                    </td>
-                    <td className="px-4 py-2 border flex align-center">
-                      <label
-                        htmlFor="serverResponseTime"
-                        className="block mb-2 text-sm font-medium text-gray-900 "
-                      >
-                        {weights.serverResponseTime}{" "}
-                      </label>
-                      <input
-                        type="range"
-                        id="serverResponseTime"
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        className="w-full h-2 m-2 bg-gray-200 rounded-lg appearance-none cursor-pointer "
-                        value={weights.serverResponseTime}
-                        onChange={handleRangeChange("serverResponseTime")}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2 border">{dictionary.page.timeToInteractive}</td>
-                    <td className="px-4 py-2 border">
-                      {data.measurement.timeToInteractive}
-                    </td>
-                    <td className="px-4 py-2 border flex align-center">
-                      <label
-                        htmlFor="timeToInteractive"
-                        className="block mb-2 text-sm font-medium text-gray-900 "
-                      >
-                        {weights.timeToInteractive}{" "}
-                      </label>
-                      <input
-                        type="range"
-                        id="timeToInteractive"
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        className="w-full h-2 m-2 bg-gray-200 rounded-lg appearance-none cursor-pointer "
-                        value={weights.timeToInteractive}
-                        onChange={handleRangeChange("timeToInteractive")}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2 border">{dictionary.page.metrics}</td>
-                    <td className="px-4 py-2 border">
-                      {data.measurement.metrics}
-                    </td>
-                    <td className="px-4 py-2 border flex align-center">
-                      <label
-                        htmlFor="metrics"
-                        className="block mb-2 text-sm font-medium text-gray-900 "
-                      >
-                        {weights.metrics}{" "}
-                      </label>
-                      <input
-                        type="range"
-                        id="metrics"
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        className="w-full h-2 m-2 bg-gray-200 rounded-lg appearance-none cursor-pointer "
-                        value={weights.metrics}
-                        onChange={handleRangeChange("metrics")}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
           </div>
         </div>
-        <div className="mx-auto mt-4">
-          <table className="w-full bg-white border rounded-lg">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-4 py-2 text-gray-600 font-bold border">{dictionary.page.url}</th>
-                <th className="px-4 py-2 text-gray-600 font-bold border">
-                  {dictionary.page.score_table}
-                </th>
-                <th className="px-4 py-2 text-gray-600 font-bold border">
-                  {dictionary.page.timestamp}
-                </th>
-                <th className="px-4 py-2 text-gray-600 font-bold border">
-                  {dictionary.page.compare}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {history.map((analysis, index) => {
-                let filteredCompareList = compareList.filter(
-                  (record) => record.id == analysis.id
-                );
-                let addButton = false;
-                if (JSON.stringify(filteredCompareList) == JSON.stringify([])) {
-                  addButton = true;
-                }
-                return (
-                  <tr key={index}>
-                    <td className="px-4 py-2 border">{analysis.url}</td>
-                    <td className="px-4 py-2 border">{analysis.analyzeScore}</td>
-                    <td className="px-4 py-2 border">
-                      {moment(analysis.createdAt).format("DD.MM.YYYY hh:mm:ss")}
-                    </td>
+        <div className="flex gap-4 flex-col lg:flex-row">
+          <div className="rounded-md border p-4">
+            <h2 className="font-bold text-xl text-center">
+              {dictionary.page.score} {data.analyzeScore}
+            </h2>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-52">{dictionary.page.metric}</TableHead>
+                  <TableHead>{dictionary.page.value}</TableHead>
+                  <TableHead> {dictionary.page.weights}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {metricsTable.map(metricRow => {
+                  return (
+                    <TableRow>
+                      <TableCell className="font-medium">{metricRow.title}</TableCell>
+                      <TableCell>{metricRow.measureValue}</TableCell>
+                      <TableCell className="text-right flex align-center">
+                        <HoverCard>
+                          <HoverCardTrigger>
+                            {Number(metricRow.weights).toFixed(2)}
+                          </HoverCardTrigger>
+                          <HoverCardContent>
+                            <Slider
+                              defaultValue={[0.5]}
+                              value={[metricRow.weights]}
+                              max={1}
+                              step={0.01}
+                              onValueChange={handleRangeChange(metricRow.name)}
+                            />
+                          </HoverCardContent>
+                        </HoverCard>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+          <div className="rounded-md border p-4">
+            <h2 className="font-bold text-xl text-center">{dictionary.page.analysis_history}</h2>
+            <ScrollArea className="h-[400px] p-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{dictionary.page.url}</TableHead>
+                    <TableHead>{dictionary.page.score_table}</TableHead>
+                    <TableHead>{dictionary.page.timestamp}</TableHead>
+                    <TableHead className="text-right">{dictionary.page.compare}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {history.map((analysis, index) => {
+                    let filteredCompareList = compareList.filter(
+                      record => record.id == analysis.id,
+                    );
+                    let addButton = false;
+                    if (JSON.stringify(filteredCompareList) == JSON.stringify([])) {
+                      addButton = true;
+                    }
+                    return (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium">{analysis.url}</TableCell>
+                        <TableCell>{analysis.analyzeScore}</TableCell>
+                        <TableCell>
+                          {moment(analysis.createdAt).format('DD.MM.YYYY hh:mm:ss')}
+                        </TableCell>
 
-                    <td className="px-4 py-2 border flex align-center">
-                      {addButton ? (
-                        <button
-                          type="button"
-                          className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                          onClick={() => handleAddToCompare(analysis.id)}
-                        >
-                          {dictionary.page.compare_button}
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                          onClick={() => handleDeleteFromCompare(analysis.id)}
-                        >
-                          {dictionary.page.delete_button}
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                        <TableCell className="text-right">
+                          {addButton ? (
+                            <Button onClick={() => handleAddToCompare(analysis.id)}>
+                              {dictionary.page.compare_button}
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="destructive"
+                              onClick={() => handleDeleteFromCompare(analysis.id)}
+                            >
+                              {dictionary.page.delete_button}
+                            </Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </ScrollArea>
+          </div>
         </div>
 
         <div className="mx-auto w-full mt-4">

@@ -25,6 +25,7 @@
   "compare_chart": "Gráfico Comparativo",
   "analyzeScore": "Analizar Puntuación",
   "lower_better": "más bajo es mejor",
-      "progress": "Progreso del análisis"
+      "progress": "Progreso del análisis",
+      "analysis_history": "Historial de análisis"
     }
 }
