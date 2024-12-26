@@ -36,7 +36,6 @@ interface IHistory {
   url: string;
   firstContentfulPaint: number;
   largestContentfulPaint: number;
-  firstMeaningfulPaint: number;
   speedIndex: number;
   totalBlockingTime: number;
   maxPotentialFid: number;
@@ -47,7 +46,6 @@ interface IHistory {
   analyzeScore: number;
   weightFirstContentfulPaint: number;
   weightLargestContentfulPaint: number;
-  weightFirstMeaningfulPaint: number;
   weightSpeedIndex: number;
   weightTotalBlockingTime: number;
   weightMaxPotentialFid: number;
@@ -95,7 +93,6 @@ export default function Home({ params: { locale } }: { params: { locale: string 
   const [weights, setWeights] = useState({
     firstContentfulPaint: 0.55,
     largestContentfulPaint: 0.55,
-    firstMeaningfulPaint: 0.55,
     speedIndex: 0.55,
     totalBlockingTime: 0.55,
     maxPotentialFid: 0.55,
@@ -109,7 +106,6 @@ export default function Home({ params: { locale } }: { params: { locale: string 
     measurement: {
       firstContentfulPaint: 0,
       largestContentfulPaint: 0,
-      firstMeaningfulPaint: 0,
       speedIndex: 0,
       totalBlockingTime: 0,
       maxPotentialFid: 0,
@@ -124,7 +120,6 @@ export default function Home({ params: { locale } }: { params: { locale: string 
     `${dictionary.page.analyzeScore} (${dictionary.page.lower_better})`,
     `${dictionary.page.firstContentfulPaint} (${dictionary.page.lower_better})`,
     `${dictionary.page.largestContentfulPaint} (${dictionary.page.lower_better})`,
-    `${dictionary.page.firstMeaningfulPaint} (${dictionary.page.lower_better})`,
     `${dictionary.page.speedIndex} (${dictionary.page.lower_better})`,
     `${dictionary.page.totalBlockingTime} (${dictionary.page.lower_better})`,
     `${dictionary.page.maxPotentialFid} (${dictionary.page.lower_better})`,
@@ -148,7 +143,7 @@ export default function Home({ params: { locale } }: { params: { locale: string 
   const updateHistory = () => {
     axios
       .get('http://localhost:5000/analyzer/analyzes', {
-        params: { limit: 20 },
+        params: { limit: 1000 },
       })
       .then((response: any) => {
         setHistory(response.data);
@@ -239,7 +234,6 @@ export default function Home({ params: { locale } }: { params: { locale: string 
           analysis.analyzeScore,
           analysis.firstContentfulPaint,
           analysis.largestContentfulPaint,
-          analysis.firstMeaningfulPaint,
           analysis.speedIndex,
           analysis.totalBlockingTime,
           analysis.maxPotentialFid,
@@ -285,12 +279,6 @@ export default function Home({ params: { locale } }: { params: { locale: string 
       title: dictionary.page.largestContentfulPaint,
       measureValue: data.measurement.largestContentfulPaint,
       weights: weights.largestContentfulPaint,
-    },
-    {
-      name: 'firstMeaningfulPaint',
-      title: dictionary.page.firstMeaningfulPaint,
-      measureValue: data.measurement.firstMeaningfulPaint,
-      weights: weights.firstMeaningfulPaint,
     },
     {
       name: 'speedIndex',

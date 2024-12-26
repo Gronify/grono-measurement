@@ -22,7 +22,6 @@ export class AnalyzerService {
       const weightsRename = {
         weightFirstContentfulPaint: analyze.weights.firstContentfulPaint,
         weightLargestContentfulPaint: analyze.weights.largestContentfulPaint,
-        weightFirstMeaningfulPaint: analyze.weights.firstMeaningfulPaint,
         weightSpeedIndex: analyze.weights.speedIndex,
         weightTotalBlockingTime: analyze.weights.totalBlockingTime,
         weightMaxPotentialFid: analyze.weights.maxPotentialFid,
@@ -47,8 +46,15 @@ export class AnalyzerService {
     }
   }
 
-  async getAnalyze(url: string, weights: WeightsAnalyzerDto, clientId: string): Promise<any> {
-    const measurement = await this.measurementService.getMeasurement(url, clientId);
+  async getAnalyze(
+    url: string,
+    weights: WeightsAnalyzerDto,
+    clientId: string,
+  ): Promise<any> {
+    const measurement = await this.measurementService.getMeasurement(
+      url,
+      clientId,
+    );
     const getAnalyzeScore = function (m, k) {
       return Object.keys(m).reduce(function (acc, mkey) {
         return k.hasOwnProperty(mkey) ? acc + m[mkey] * k[mkey] : acc;

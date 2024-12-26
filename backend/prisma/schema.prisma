@@ -18,7 +18,6 @@ model Analyze {
   url                          String
   firstContentfulPaint         Float
   largestContentfulPaint       Float
-  firstMeaningfulPaint         Float
   speedIndex                   Float
   totalBlockingTime            Float
   maxPotentialFid              Float
@@ -29,7 +28,6 @@ model Analyze {
   analyzeScore                 Float
   weightFirstContentfulPaint   Float
   weightLargestContentfulPaint Float
-  weightFirstMeaningfulPaint   Float
   weightSpeedIndex             Float
   weightTotalBlockingTime      Float
   weightMaxPotentialFid        Float

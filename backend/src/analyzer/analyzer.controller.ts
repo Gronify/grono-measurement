@@ -11,10 +11,9 @@ export class AnalyzerController {
     @Query()
     query: {
       url: string;
-      clientId :string;
+      clientId: string;
       fcp: string;
       lcp: string;
-      fmp: string;
       si: string;
       tbt: string;
       mpf: string;
@@ -27,7 +26,6 @@ export class AnalyzerController {
     const weights: WeightsAnalyzerDto = {
       firstContentfulPaint: parseFloat(query.fcp as any as string),
       largestContentfulPaint: parseFloat(query.lcp as any as string),
-      firstMeaningfulPaint: parseFloat(query.fmp as any as string),
       speedIndex: parseFloat(query.si as any as string),
       totalBlockingTime: parseFloat(query.tbt as any as string),
       maxPotentialFid: parseFloat(query.mpf as any as string),
@@ -37,7 +35,11 @@ export class AnalyzerController {
       metrics: parseFloat(query.m as any as string),
     };
 
-    return await this.analyzerService.getAnalyze(query.url, weights, query.clientId);
+    return await this.analyzerService.getAnalyze(
+      query.url,
+      weights,
+      query.clientId,
+    );
   }
 
   @Get('analyzes')

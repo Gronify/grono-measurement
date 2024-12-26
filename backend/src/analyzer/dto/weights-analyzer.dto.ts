@@ -1,7 +1,6 @@
 export class WeightsAnalyzerDto {
   readonly firstContentfulPaint: number;
   readonly largestContentfulPaint: number;
-  readonly firstMeaningfulPaint: number;
   readonly speedIndex: number;
   readonly totalBlockingTime: number;
   readonly maxPotentialFid: number;

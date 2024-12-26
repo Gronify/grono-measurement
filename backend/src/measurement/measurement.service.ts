@@ -82,9 +82,7 @@ export class MeasurementService {
         settings: {
           onlyAudits: [
             'first-contentful-paint',
-            'first-meaningful-paint',
             'largest-contentful-paint',
-            'first-meaningful-paint',
             'speed-index',
             'total-blocking-time',
             'max-potential-fid',
@@ -124,8 +122,6 @@ export class MeasurementService {
       lhr.audits['first-contentful-paint'].numericValue;
     const largestContentfulPaint =
       lhr.audits['largest-contentful-paint'].numericValue;
-    const firstMeaningfulPaint =
-      lhr.audits['first-meaningful-paint'].numericValue;
     const speedIndex = lhr.audits['speed-index'].numericValue;
     const totalBlockingTime = lhr.audits['total-blocking-time'].numericValue;
     const maxPotentialFid = lhr.audits['max-potential-fid'].numericValue;
@@ -140,7 +136,6 @@ export class MeasurementService {
     const res = {
       firstContentfulPaint: firstContentfulPaint,
       largestContentfulPaint: largestContentfulPaint,
-      firstMeaningfulPaint: firstMeaningfulPaint,
       speedIndex: speedIndex,
       totalBlockingTime: totalBlockingTime,
       maxPotentialFid: maxPotentialFid,
