@@ -16,6 +16,9 @@ datasource db {
 model Analyze {
   id                           Int      @id @default(autoincrement())
   url                          String
+  name                         String   @default("")
+  method                       String   @default("")
+  description                  String   @default("")
   firstContentfulPaint         Float
   largestContentfulPaint       Float
   speedIndex                   Float

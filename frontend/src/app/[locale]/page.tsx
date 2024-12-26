@@ -34,6 +34,9 @@ interface IMeasurementChartDataset {
 interface IHistory {
   id: string;
   url: string;
+  name: string;
+  method: string;
+  description: string;
   firstContentfulPaint: number;
   largestContentfulPaint: number;
   speedIndex: number;
@@ -89,7 +92,12 @@ export default function Home({ params: { locale } }: { params: { locale: string 
   const [lastMessage, setLastMessage] = useState<string>('');
   const [progress, setProgress] = useState<number>(0);
   const dictionary = useDictionary();
-  const [url, setUrl] = useState('');
+  const [dataForResearch, setDataForResearch] = useState({
+    url: '',
+    name: '',
+    method: '',
+    description: '',
+  });
   const [weights, setWeights] = useState({
     firstContentfulPaint: 0.55,
     largestContentfulPaint: 0.55,
@@ -133,7 +141,7 @@ export default function Home({ params: { locale } }: { params: { locale: string 
   const [chartDataset, setChartDataset] = useState<IMeasurementChartDataset[]>([]);
 
   const handleChange = (prop: any) => (event: any) => {
-    setUrl(event.target.value);
+    setDataForResearch({ ...dataForResearch, [prop]: event.target.value });
   };
 
   const handleRangeChange = (prop: any) => (value: any) => {
@@ -150,7 +158,10 @@ export default function Home({ params: { locale } }: { params: { locale: string 
       });
   };
 
-  function send(url: string, weights: any) {
+  function send(
+    dataForResearch: { url: string; name: string; method: string; description: string },
+    weights: any,
+  ) {
     const weightsForRequest = {
       fcp: parseFloat(weights.firstContentfulPaint),
       lcp: parseFloat(weights.largestContentfulPaint),
@@ -166,7 +177,14 @@ export default function Home({ params: { locale } }: { params: { locale: string 
     if (socket) {
       axios
         .get('http://localhost:5000/analyzer', {
-          params: { url: url, ...weightsForRequest, clientId: socket.id },
+          params: {
+            url: dataForResearch.url,
+            name: dataForResearch.name,
+            method: dataForResearch.method,
+            description: dataForResearch.description,
+            ...weightsForRequest,
+            clientId: socket.id,
+          },
         })
         .then((response: any) => {
           setData(response.data);
@@ -229,7 +247,7 @@ export default function Home({ params: { locale } }: { params: { locale: string 
     ];
     const chartDataset = compareList.map((analysis, index) => {
       return {
-        label: analysis.url,
+        label: `${analysis.url} ${analysis.name} ${analysis.method}`,
         data: [
           analysis.analyzeScore,
           analysis.firstContentfulPaint,
@@ -259,12 +277,41 @@ export default function Home({ params: { locale } }: { params: { locale: string 
     let filteredCompareList = compareList.filter(analysis => analysis.id == id);
     if (JSON.stringify(filteredCompareList) == JSON.stringify([])) {
       setCompareList(compareList => [...compareList, history[indexOfAnalysisToAdd]]);
+      let analysis = history[indexOfAnalysisToAdd];
+      setData({
+        analyzeScore: analysis.analyzeScore,
+        measurement: {
+          firstContentfulPaint: analysis.firstContentfulPaint,
+          largestContentfulPaint: analysis.largestContentfulPaint,
+          speedIndex: analysis.speedIndex,
+          totalBlockingTime: analysis.totalBlockingTime,
+          maxPotentialFid: analysis.maxPotentialFid,
+          cumulativeLayoutShift: analysis.cumulativeLayoutShift,
+          serverResponseTime: analysis.serverResponseTime,
+          timeToInteractive: analysis.timeToInteractive,
+          metrics: analysis.metrics,
+        },
+      });
     }
   };
 
   const handleDeleteFromCompare = (id: string) => {
     let filteredCompareList = compareList.filter(analysis => analysis.id !== id);
     setCompareList(filteredCompareList);
+    setData({
+      analyzeScore: 0,
+      measurement: {
+        firstContentfulPaint: 0,
+        largestContentfulPaint: 0,
+        speedIndex: 0,
+        totalBlockingTime: 0,
+        maxPotentialFid: 0,
+        cumulativeLayoutShift: 0,
+        serverResponseTime: 0,
+        timeToInteractive: 0,
+        metrics: 0,
+      },
+    });
   };
 
   const metricsTable = [
@@ -333,15 +380,39 @@ export default function Home({ params: { locale } }: { params: { locale: string 
       <main className="flex flex-col items-center justify-between">
         <div className="w-full items-center justify-between font-mono text-sm flex">
           <div className="md:w-[400px] mx-auto">
+            <Label htmlFor="name">{dictionary.page.enter_nameOfTheSite}</Label>
+            <Input
+              id="name"
+              placeholder={dictionary.page.enter_nameOfTheSite}
+              value={dataForResearch.name}
+              onChange={handleChange('name')}
+              className="mb-2"
+            ></Input>
+            <Label htmlFor="method">{dictionary.page.enter_method}</Label>
+            <Input
+              id="method"
+              placeholder={dictionary.page.enter_method}
+              value={dataForResearch.method}
+              onChange={handleChange('method')}
+              className="mb-2"
+            ></Input>
+            <Label htmlFor="description">{dictionary.page.enter_description}</Label>
+            <Input
+              id="description"
+              placeholder={dictionary.page.enter_description}
+              value={dataForResearch.description}
+              onChange={handleChange('description')}
+              className="mb-2"
+            ></Input>
             <Label htmlFor="url">{dictionary.page.enter_url}</Label>
             <div className="flex justify-center align-center gap-2 mb-4">
               <Input
                 id="url"
                 placeholder={dictionary.page.enter_url}
-                value={url}
-                onChange={handleChange('')}
+                value={dataForResearch.url}
+                onChange={handleChange('url')}
               ></Input>
-              <Button onClick={() => send(url, weights)}>
+              <Button onClick={() => send(dataForResearch, weights)}>
                 <Send className="mr-2 h-4 w-4" />
                 {dictionary.page.submit}
               </Button>
@@ -421,6 +492,9 @@ export default function Home({ params: { locale } }: { params: { locale: string 
                 <TableHeader>
                   <TableRow>
                     <TableHead>{dictionary.page.url}</TableHead>
+                    <TableHead>{dictionary.page.nameOfTheSite}</TableHead>
+                    <TableHead>{dictionary.page.method}</TableHead>
+                    <TableHead>{dictionary.page.description}</TableHead>
                     <TableHead>{dictionary.page.score_table}</TableHead>
                     <TableHead>{dictionary.page.timestamp}</TableHead>
                     <TableHead className="text-right">{dictionary.page.compare}</TableHead>
@@ -438,6 +512,9 @@ export default function Home({ params: { locale } }: { params: { locale: string 
                     return (
                       <TableRow key={index}>
                         <TableCell className="font-medium">{analysis.url}</TableCell>
+                        <TableCell>{analysis.name}</TableCell>
+                        <TableCell>{analysis.method}</TableCell>
+                        <TableCell>{analysis.description}</TableCell>
                         <TableCell>{analysis.analyzeScore}</TableCell>
                         <TableCell>
                           {moment(analysis.createdAt).format('DD.MM.YYYY hh:mm:ss')}

@@ -1,6 +1,9 @@
 {
     "page": {
-     "enter_url": "Enter URL:",
+      "enter_nameOfTheSite": "Name:",
+      "enter_method": "Method:",
+      "enter_description": "Description:",
+      "enter_url": "Enter URL:",
       "submit": "Submit",
       "score": "Score:",
       "metric": "Metric",
@@ -16,6 +19,9 @@
       "serverResponseTime": "Server Response Time",
       "timeToInteractive": "Time To Interactive",
       "metrics": "Metrics",
+      "nameOfTheSite": "Name",
+      "method": "Method",
+      "description": "Description",
       "url": "URL",
       "score_table": "Score",
       "timestamp": "Timestamp",

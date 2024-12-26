@@ -20,15 +20,7 @@ type Language = {
 
 const languages: Language[] = [
   { code: 'en', label: 'English' },
-  { code: 'de', label: 'Deutsch' },
   { code: 'uk', label: 'Українська' },
-  { code: 'zh', label: '中文' },
-  { code: 'es', label: 'Español' },
-  { code: 'pt', label: 'Português' },
-  { code: 'ar', label: 'العربية' },
-  { code: 'ja', label: '日本語' },
-  { code: 'fa', label: 'فارسی' },
-  { code: 'hi', label: 'हिन्दी' },
 ];
 
 const LanguageSwitcher = ({ locale }: { locale: string }) => {

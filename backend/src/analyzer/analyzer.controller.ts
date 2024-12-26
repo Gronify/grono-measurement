@@ -12,6 +12,9 @@ export class AnalyzerController {
     query: {
       url: string;
       clientId: string;
+      name: string;
+      method: string;
+      description: string;
       fcp: string;
       lcp: string;
       si: string;
@@ -39,6 +42,9 @@ export class AnalyzerController {
       query.url,
       weights,
       query.clientId,
+      query.name,
+      query.method,
+      query.description,
     );
   }
 

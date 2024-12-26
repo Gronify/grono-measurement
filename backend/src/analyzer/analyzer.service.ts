@@ -15,6 +15,9 @@ export class AnalyzerService {
   async saveAnalyze(analyze: {
     url: string;
     analyzeScore: number;
+    name: string;
+    method: string;
+    description: string;
     measurement: MeasurementDto;
     weights: WeightsAnalyzerDto;
   }) {
@@ -36,6 +39,9 @@ export class AnalyzerService {
           ...analyze.measurement,
           analyzeScore: analyze.analyzeScore,
           ...weightsRename,
+          name: analyze.name,
+          method: analyze.method,
+          description: analyze.description,
         },
       });
       return analyzeCreate;
@@ -50,6 +56,9 @@ export class AnalyzerService {
     url: string,
     weights: WeightsAnalyzerDto,
     clientId: string,
+    name: string,
+    method: string,
+    description: string,
   ): Promise<any> {
     const measurement = await this.measurementService.getMeasurement(
       url,
@@ -64,6 +73,9 @@ export class AnalyzerService {
     const analyzeScore = getAnalyzeScore(measurement, weights);
     await this.saveAnalyze({
       url: url,
+      name: name,
+      method: method,
+      description: description,
       analyzeScore: analyzeScore,
       measurement: measurement,
       weights: weights,
