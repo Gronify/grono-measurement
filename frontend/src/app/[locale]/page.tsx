@@ -12,7 +12,7 @@ import { ModeToggle } from '@/components/ModeToggle';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Send } from 'lucide-react';
+import { Download, Send } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -137,7 +137,6 @@ export default function Home({ params: { locale } }: { params: { locale: string 
     `${dictionary.page.metrics} (${dictionary.page.lower_better})`,
   ]);
   const [compareList, setCompareList] = useState<IHistory[]>([]);
-
   const [chartDataset, setChartDataset] = useState<IMeasurementChartDataset[]>([]);
 
   const handleChange = (prop: any) => (event: any) => {
@@ -292,6 +291,7 @@ export default function Home({ params: { locale } }: { params: { locale: string 
           metrics: analysis.metrics,
         },
       });
+      console.log(history);
     }
   };
 
@@ -370,6 +370,34 @@ export default function Home({ params: { locale } }: { params: { locale: string 
       weights: weights.metrics,
     },
   ];
+
+  const handleConvertToCSV = () => {
+    exportToCSV(history, 'performance_metrics');
+  };
+
+  const exportToCSV = (data: any[], fileName: string) => {
+    if (!data || !data.length) return;
+
+    const headers = Object.keys(data[0]);
+
+    const csvRows = [
+      headers.join(','),
+      ...data.map(row =>
+        headers
+          .map(header => JSON.stringify(row[header], (_, value) => (value === null ? '' : value)))
+          .join(','),
+      ),
+    ];
+
+    const csvContent = csvRows.join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.setAttribute('download', `${fileName}.csv`);
+    link.click();
+  };
 
   return (
     <>
@@ -486,7 +514,14 @@ export default function Home({ params: { locale } }: { params: { locale: string 
             </Table>
           </div>
           <div className="rounded-md border p-4">
-            <h2 className="font-bold text-xl text-center">{dictionary.page.analysis_history}</h2>
+            <h2 className="font-bold text-xl text-center">
+              {dictionary.page.analysis_history}{' '}
+              <Button onClick={() => handleConvertToCSV()}>
+                <Download className="mr-2 h-4 w-4" />
+                {dictionary.page.download_csv}
+              </Button>
+            </h2>
+
             <ScrollArea className="h-[400px] p-4">
               <Table>
                 <TableHeader>

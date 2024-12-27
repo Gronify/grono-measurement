@@ -32,6 +32,7 @@
     "analyzeScore": "Аналіз оцінки",
     "lower_better": "менше — краще",
     "progress": "Прогрес аналізу",
-    "analysis_history": "Історія аналізу"
+    "analysis_history": "Історія аналізу",
+    "download_csv": "Завантажити CSV"
   }
 }
