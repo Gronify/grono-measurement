@@ -97,7 +97,10 @@ export default function Home({ params: { locale } }: { params: { locale: string 
     name: '',
     method: '',
     description: '',
+    numberOfIterations: 1,
   });
+  const [numberOfIterationsProgress, setNumberOfIterationsProgress] = useState<number>(0);
+
   const [weights, setWeights] = useState({
     firstContentfulPaint: 0.55,
     largestContentfulPaint: 0.55,
@@ -141,6 +144,9 @@ export default function Home({ params: { locale } }: { params: { locale: string 
 
   const handleChange = (prop: any) => (event: any) => {
     setDataForResearch({ ...dataForResearch, [prop]: event.target.value });
+    if (prop == 'numberOfIterations') {
+      setNumberOfIterationsProgress(0);
+    }
   };
 
   const handleRangeChange = (prop: any) => (value: any) => {
@@ -157,8 +163,14 @@ export default function Home({ params: { locale } }: { params: { locale: string 
       });
   };
 
-  function send(
-    dataForResearch: { url: string; name: string; method: string; description: string },
+  async function send(
+    dataForResearch: {
+      url: string;
+      name: string;
+      method: string;
+      description: string;
+      numberOfIterations: number;
+    },
     weights: any,
   ) {
     const weightsForRequest = {
@@ -174,21 +186,25 @@ export default function Home({ params: { locale } }: { params: { locale: string 
       m: parseFloat(weights.metrics),
     };
     if (socket) {
-      axios
-        .get('http://localhost:5000/analyzer', {
-          params: {
-            url: dataForResearch.url,
-            name: dataForResearch.name,
-            method: dataForResearch.method,
-            description: dataForResearch.description,
-            ...weightsForRequest,
-            clientId: socket.id,
-          },
-        })
-        .then((response: any) => {
-          setData(response.data);
-          updateHistory();
-        });
+      setNumberOfIterationsProgress(0);
+      for (let iteration = 0; iteration < dataForResearch.numberOfIterations; iteration++) {
+        await axios
+          .get('http://localhost:5000/analyzer', {
+            params: {
+              url: dataForResearch.url,
+              name: dataForResearch.name,
+              method: dataForResearch.method,
+              description: dataForResearch.description,
+              ...weightsForRequest,
+              clientId: socket.id,
+            },
+          })
+          .then((response: any) => {
+            setData(response.data);
+            updateHistory();
+          });
+        setNumberOfIterationsProgress(iteration + 1);
+      }
     }
   }
 
@@ -432,6 +448,14 @@ export default function Home({ params: { locale } }: { params: { locale: string 
               onChange={handleChange('description')}
               className="mb-2"
             ></Input>
+            <Label htmlFor="numberOfIterations">{dictionary.page.enter_numberOfIterations}</Label>
+            <Input
+              id="numberOfIterations"
+              placeholder={dictionary.page.enter_numberOfIterations}
+              value={dataForResearch.numberOfIterations}
+              onChange={handleChange('numberOfIterations')}
+              className="mb-2"
+            ></Input>
             <Label htmlFor="url">{dictionary.page.enter_url}</Label>
             <div className="flex justify-center align-center gap-2 mb-4">
               <Input
@@ -470,6 +494,34 @@ export default function Home({ params: { locale } }: { params: { locale: string 
                 <p>{progress.toFixed(0)}%</p>
               </div>
             </div>
+
+            <div>
+              <div className="mt-2">
+                <h4 className="text-nowrap">{dictionary.page.progressIterations}</h4>
+                <div
+                  style={{
+                    width: '100%',
+                    backgroundColor: '#e0e0e0',
+                    borderRadius: '5px',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: `${
+                        (numberOfIterationsProgress / dataForResearch.numberOfIterations) * 100
+                      }%`,
+                      backgroundColor: '#76c7c0',
+                      height: '24px',
+                      borderRadius: '5px',
+                      transition: 'width 0.3s ease-in-out',
+                    }}
+                  ></div>
+                </div>
+                <p>
+                  {numberOfIterationsProgress}/{dataForResearch.numberOfIterations}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
         <div className="flex gap-4 flex-col lg:flex-row">
@@ -486,9 +538,9 @@ export default function Home({ params: { locale } }: { params: { locale: string 
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {metricsTable.map(metricRow => {
+                {metricsTable.map((metricRow, index) => {
                   return (
-                    <TableRow>
+                    <TableRow key={index}>
                       <TableCell className="font-medium">{metricRow.title}</TableCell>
                       <TableCell>{metricRow.measureValue}</TableCell>
                       <TableCell className="text-right flex align-center">

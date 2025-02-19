@@ -33,6 +33,10 @@
     "lower_better": "менше — краще",
     "progress": "Прогрес аналізу",
     "analysis_history": "Історія аналізу",
-    "download_csv": "Завантажити CSV"
+    "download_csv": "Завантажити CSV",
+    "numberOfIterations":"Кількість ітерацій",
+    "enter_numberOfIterations":"Введіть кількість ітерацій",
+    "progressIterations": "Прогрес ітерації"
+
   }
 }

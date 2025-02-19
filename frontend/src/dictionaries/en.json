@@ -33,6 +33,10 @@
     "lower_better": "lower better",
     "progress": "Analysis progress",
     "analysis_history": "Analysis history",
-    "download_csv": "Download CSV"
+    "download_csv": "Download CSV",
+    "numberOfIterations":"Number of iterations",
+    "enter_numberOfIterations":"Enter number of iterations",
+    "progressIterations": "Iteration progress"
+
   }
 }
