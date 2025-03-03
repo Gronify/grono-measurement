@@ -33,8 +33,6 @@ COPY package*.json ./
 
 RUN npm install --only=production
 
-RUN npx prisma generate --schema=./prisma/schema.prisma
-
 COPY --from=development /app/dist ./dist
 COPY --from=development /app/node_modules ./node_modules
 
