@@ -87,7 +87,7 @@ const progressMapping: { [key: string]: number } = {
   'Success!': 100,
 };
 
-const API = 'https://grono-measurement-backend-production.up.railway.app';
+const API = 'https://localhost:5000';
 
 export default function Home({ params: { locale } }: { params: { locale: string } }) {
   const [socket, setSocket] = useState<Socket | null>(null);
