@@ -44,8 +44,11 @@ export class AnalyzerService {
           description: analyze.description,
         },
       });
+      console.log('analyzeCreate');
+      console.log(analyze.analyzeScore);
       return analyzeCreate;
     } catch (error) {
+      console.log(error);
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') throw new BadRequestException('taken');
       }
@@ -92,6 +95,8 @@ export class AnalyzerService {
           createdAt: 'desc',
         },
       });
+      console.log('analyzes');
+      console.log(analyzes);
       return analyzes;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
