@@ -40,5 +40,6 @@ COPY --from=development /app/node_modules ./node_modules
 COPY --from=development /app/prisma/schema.prisma ./prisma/schema.prisma
 
 RUN npx prisma generate --schema=./prisma/schema.prisma
+RUN npx prisma migrate deploy
 
 CMD ["node", "dist/src/main"]
