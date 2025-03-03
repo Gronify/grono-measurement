@@ -1,0 +1,31 @@
+-- CreateTable
+CREATE TABLE "Analyze" (
+    "id" SERIAL NOT NULL,
+    "url" TEXT NOT NULL,
+    "name" TEXT NOT NULL DEFAULT '',
+    "method" TEXT NOT NULL DEFAULT '',
+    "description" TEXT NOT NULL DEFAULT '',
+    "firstContentfulPaint" DOUBLE PRECISION NOT NULL,
+    "largestContentfulPaint" DOUBLE PRECISION NOT NULL,
+    "speedIndex" DOUBLE PRECISION NOT NULL,
+    "totalBlockingTime" DOUBLE PRECISION NOT NULL,
+    "maxPotentialFid" DOUBLE PRECISION NOT NULL,
+    "cumulativeLayoutShift" DOUBLE PRECISION NOT NULL,
+    "serverResponseTime" DOUBLE PRECISION NOT NULL,
+    "timeToInteractive" DOUBLE PRECISION NOT NULL,
+    "metrics" DOUBLE PRECISION NOT NULL,
+    "analyzeScore" DOUBLE PRECISION NOT NULL,
+    "weightFirstContentfulPaint" DOUBLE PRECISION NOT NULL,
+    "weightLargestContentfulPaint" DOUBLE PRECISION NOT NULL,
+    "weightSpeedIndex" DOUBLE PRECISION NOT NULL,
+    "weightTotalBlockingTime" DOUBLE PRECISION NOT NULL,
+    "weightMaxPotentialFid" DOUBLE PRECISION NOT NULL,
+    "weightCumulativeLayoutShift" DOUBLE PRECISION NOT NULL,
+    "weightServerResponseTime" DOUBLE PRECISION NOT NULL,
+    "weightTimeToInteractive" DOUBLE PRECISION NOT NULL,
+    "weightMetrics" DOUBLE PRECISION NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Analyze_pkey" PRIMARY KEY ("id")
+);
