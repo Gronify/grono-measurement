@@ -24,6 +24,8 @@ RUN ls -la /app/dist
 # PRODUCTION STAGE
 FROM node:20.11.1-alpine as production
 
+RUN apk add --no-cache chromium --repository=http://dl-cdn.alpinelinux.org/alpine/v3.10/main
+
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
