@@ -1,20 +1,26 @@
-
 FROM node:20.11.1-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN  npm install --production
+
+ENV NODE_ENV=production 
+
+RUN npm install --production
 
 FROM node:20.11.1-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-# COPY public ./public
+
+COPY next.config.js ./
+COPY tsconfig.json ./
+COPY .env ./
+
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN npm run build
+RUN npm run build  
 
 FROM node:20.11.1-alpine AS runner
 WORKDIR /app
@@ -31,4 +37,6 @@ COPY --from=builder /app/package.json ./package.json
 
 USER nextjs
 
-CMD ["npm", "run", "dev"]
+EXPOSE 3000  
+
+CMD ["npm", "run", "start"]
