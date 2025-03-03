@@ -36,4 +36,6 @@ RUN npm install --only=production
 COPY --from=development /app/dist ./dist
 COPY --from=development /app/node_modules ./node_modules
 
+RUN npx prisma generate --schema=./prisma/schema.prisma
+
 CMD ["node", "dist/src/main"]
