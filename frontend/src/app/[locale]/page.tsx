@@ -87,6 +87,8 @@ const progressMapping: { [key: string]: number } = {
   'Success!': 100,
 };
 
+const API = 'https://grono-measurement-backend-production.up.railway.app';
+
 export default function Home({ params: { locale } }: { params: { locale: string } }) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [lastMessage, setLastMessage] = useState<string>('');
@@ -155,7 +157,7 @@ export default function Home({ params: { locale } }: { params: { locale: string 
 
   const updateHistory = () => {
     axios
-      .get('http://localhost:5000/analyzer/analyzes', {
+      .get(`${API}/analyzer/analyzes`, {
         params: { limit: 1000 },
       })
       .then((response: any) => {
@@ -189,7 +191,7 @@ export default function Home({ params: { locale } }: { params: { locale: string 
       setNumberOfIterationsProgress(0);
       for (let iteration = 0; iteration < dataForResearch.numberOfIterations; iteration++) {
         await axios
-          .get('http://localhost:5000/analyzer', {
+          .get(`${API}/analyzer`, {
             params: {
               url: dataForResearch.url,
               name: dataForResearch.name,
@@ -211,7 +213,7 @@ export default function Home({ params: { locale } }: { params: { locale: string 
   useEffect(() => {
     updateHistory();
 
-    const socketInstance = io('http://localhost:5000');
+    const socketInstance = io(`${API}`);
     setSocket(socketInstance);
 
     socketInstance.on('info', (message: string) => {
