@@ -161,7 +161,9 @@ export default function Home({ params: { locale } }: { params: { locale: string 
         params: { limit: 1000 },
       })
       .then((response: any) => {
-        setHistory(response.data);
+        if (response.data != '') {
+          setHistory(response.data);
+        }
       });
   };
 
@@ -213,7 +215,7 @@ export default function Home({ params: { locale } }: { params: { locale: string 
   useEffect(() => {
     updateHistory();
 
-    const socketInstance = io(`test`);
+    const socketInstance = io(`${API}`);
     setSocket(socketInstance);
 
     socketInstance.on('info', (message: string) => {
