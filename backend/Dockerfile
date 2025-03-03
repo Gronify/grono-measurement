@@ -11,6 +11,8 @@ RUN npm install
 
 COPY . .
 
+RUN ls -R /app
+
 RUN npx prisma generate --schema=./prisma/schema.prisma
 
 ENV PATH="/app/node_modules/.bin:$PATH"
