@@ -17,6 +17,8 @@ RUN npm install --only=production
 
 COPY . .
 
+ENV PATH="/app/node_modules/.bin:$PATH"
+
 RUN npm run build
 
 FROM node:20.11.1-alpine as production
