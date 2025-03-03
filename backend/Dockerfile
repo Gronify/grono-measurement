@@ -9,9 +9,9 @@ COPY package*.json ./
 
 RUN npm install
 
-RUN npx prisma generate
-
 COPY . .
+
+RUN npx prisma generate
 
 ENV PATH="/app/node_modules/.bin:$PATH"
 
