@@ -9,6 +9,8 @@ COPY package*.json ./
 
 RUN npm install
 
+RUN npx prisma generate
+
 COPY . .
 
 ENV PATH="/app/node_modules/.bin:$PATH"
@@ -28,6 +30,8 @@ WORKDIR /app
 COPY package*.json ./
 
 RUN npm install --only=production
+
+RUN npx prisma generate
 
 COPY --from=development /app/dist ./dist
 COPY --from=development /app/node_modules ./node_modules
