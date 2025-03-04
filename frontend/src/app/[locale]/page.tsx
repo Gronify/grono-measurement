@@ -275,7 +275,7 @@ export default function Home({ params: { locale } }: { params: { locale: string 
           analysis.speedIndex,
           analysis.totalBlockingTime,
           analysis.maxPotentialFid,
-          analysis.cumulativeLayoutShift,
+          analysis.cumulativeLayoutShift * 10000,
           analysis.serverResponseTime,
           analysis.timeToInteractive,
           analysis.metrics,
@@ -369,7 +369,7 @@ export default function Home({ params: { locale } }: { params: { locale: string 
     {
       name: 'cumulativeLayoutShift',
       title: dictionary.page.cumulativeLayoutShift,
-      measureValue: data.measurement.cumulativeLayoutShift * 10000,
+      measureValue: data.measurement.cumulativeLayoutShift,
       weights: weights.cumulativeLayoutShift,
     },
     {
