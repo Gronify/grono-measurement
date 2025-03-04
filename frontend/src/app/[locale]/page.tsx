@@ -104,16 +104,17 @@ export default function Home({ params: { locale } }: { params: { locale: string 
   const [numberOfIterationsProgress, setNumberOfIterationsProgress] = useState<number>(0);
 
   const [weights, setWeights] = useState({
-    firstContentfulPaint: 0.55,
-    largestContentfulPaint: 0.55,
-    speedIndex: 0.55,
-    totalBlockingTime: 0.55,
-    maxPotentialFid: 0.55,
-    cumulativeLayoutShift: 0.55,
-    serverResponseTime: 0.55,
-    timeToInteractive: 0.55,
+    firstContentfulPaint: 0.85,
+    largestContentfulPaint: 0.78,
+    speedIndex: 0.63,
+    totalBlockingTime: 0.79,
+    maxPotentialFid: 0.86,
+    cumulativeLayoutShift: 0.86,
+    serverResponseTime: 0.72,
+    timeToInteractive: 0.75,
     metrics: 0,
   });
+
   const [data, setData] = useState({
     analyzeScore: 0,
     measurement: {
@@ -368,7 +369,7 @@ export default function Home({ params: { locale } }: { params: { locale: string 
     {
       name: 'cumulativeLayoutShift',
       title: dictionary.page.cumulativeLayoutShift,
-      measureValue: data.measurement.cumulativeLayoutShift,
+      measureValue: data.measurement.cumulativeLayoutShift * 10000,
       weights: weights.cumulativeLayoutShift,
     },
     {

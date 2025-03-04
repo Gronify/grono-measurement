@@ -68,6 +68,7 @@ export class AnalyzerService {
       clientId,
     );
     const getAnalyzeScore = function (m, k) {
+      k.weightCumulativeLayoutShift = k.weightCumulativeLayoutShift * 10000;
       return Object.keys(m).reduce(function (acc, mkey) {
         return k.hasOwnProperty(mkey) ? acc + m[mkey] * k[mkey] : acc;
       }, 0);
