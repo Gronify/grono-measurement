@@ -1,6 +1,7 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { AnalyzerService } from './analyzer.service';
 import { WeightsAnalyzerDto } from './dto/weights-analyzer.dto';
+import { CreateAverageAnalysisDto } from './dto/create-average-analysis.dto';
 
 @Controller('analyzer')
 export class AnalyzerController {
@@ -56,5 +57,18 @@ export class AnalyzerController {
     },
   ): Promise<any> {
     return await this.analyzerService.getAnalyzes(parseInt(query.limit));
+  }
+
+  @Post('average')
+  async createAverageAnalysis(
+    @Body() averageAnalysis: CreateAverageAnalysisDto,
+  ): Promise<any> {
+    return this.analyzerService.createAverageAnalysis({
+      ids: averageAnalysis.ids,
+      url: averageAnalysis.url,
+      name: averageAnalysis.name,
+      method: averageAnalysis.method,
+      description: averageAnalysis.description,
+    });
   }
 }

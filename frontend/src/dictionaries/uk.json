@@ -36,7 +36,12 @@
     "download_csv": "Завантажити CSV",
     "numberOfIterations":"Кількість ітерацій",
     "enter_numberOfIterations":"Введіть кількість ітерацій",
-    "progressIterations": "Прогрес ітерації"
+    "progressIterations": "Прогрес ітерації",
+    "computeAverages": "Обчислити середнє",
+    "averageCalculationPanel": "Панель обчислення середнього",
+    "selectForAveraging": "Вибрати для усереднення",
+    "select": "Вибрати",
+    "deselect": "Скасувати вибір"
 
   }
 }

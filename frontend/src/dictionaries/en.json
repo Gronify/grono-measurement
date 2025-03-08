@@ -36,7 +36,13 @@
     "download_csv": "Download CSV",
     "numberOfIterations":"Number of iterations",
     "enter_numberOfIterations":"Enter number of iterations",
-    "progressIterations": "Iteration progress"
+    "progressIterations": "Iteration progress",
+    "computeAverages":"Compute Averages",
+    "averageCalculationPanel": "Average Calculation Panel",
+    "selectForAveraging": "Select for Averaging",
+    "select": "Select",
+    "deselect": "Deselect"
+
 
   }
 }
