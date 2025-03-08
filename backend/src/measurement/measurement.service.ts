@@ -92,6 +92,8 @@ export class MeasurementService {
             'metrics',
           ],
           onlyCategories: ['performance'],
+          // emulatedFormFactor: 'mobile',
+          // formFactor: 'mobile',
           emulatedFormFactor: 'none',
           formFactor: 'desktop',
           throttling: {
@@ -102,6 +104,13 @@ export class MeasurementService {
             downloadThroughputKbps: 0,
             uploadThroughputKbps: 0,
           },
+          // screenEmulation: {
+          //   mobile: true,
+          //   width: 375,
+          //   height: 812,
+          //   deviceScaleFactor: 2.625,
+          //   disabled: false,
+          // },
           screenEmulation: {
             mobile: false,
             width: 1350,
@@ -109,6 +118,8 @@ export class MeasurementService {
             deviceScaleFactor: 1,
             disabled: false,
           },
+          // emulatedUserAgent:
+          //   'Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Version/12.0 Mobile/15A372 Safari/537.36',
           emulatedUserAgent:
             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4143.7 Safari/537.36 Chrome-Lighthouse',
         },
