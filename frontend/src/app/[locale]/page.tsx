@@ -25,6 +25,15 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 interface IMeasurementChartDataset {
   label: string;
@@ -140,13 +149,25 @@ export default function Home({ params: { locale } }: { params: { locale: string 
     `${dictionary.page.metrics} (${dictionary.page.lower_better})`,
   ]);
   const [compareList, setCompareList] = useState<IHistory[]>([]);
+  const [averageList, setAverageList] = useState<IHistory[]>([]);
   const [chartDataset, setChartDataset] = useState<IMeasurementChartDataset[]>([]);
+
+  const [dataForAverage, setDataForAverage] = useState({
+    url: '',
+    name: '',
+    method: '',
+    description: '',
+  });
 
   const handleChange = (prop: any) => (event: any) => {
     setDataForResearch({ ...dataForResearch, [prop]: event.target.value });
     if (prop == 'numberOfIterations') {
       setNumberOfIterationsProgress(0);
     }
+  };
+
+  const handleChangeAverage = (prop: any) => (event: any) => {
+    setDataForAverage({ ...dataForAverage, [prop]: event.target.value });
   };
 
   const handleRangeChange = (prop: any) => (value: any) => {
@@ -331,6 +352,50 @@ export default function Home({ params: { locale } }: { params: { locale: string 
       },
     });
   };
+
+  const handleAddToAverage = (id: string) => {
+    const indexOfAnalysisToAdd = history.findIndex(analysis => analysis.id === id);
+    let filteredAverageList = compareList.filter(analysis => analysis.id == id);
+    if (JSON.stringify(filteredAverageList) == JSON.stringify([])) {
+      setAverageList(averageList => [...averageList, history[indexOfAnalysisToAdd]]);
+      let analysis = history[indexOfAnalysisToAdd];
+      setDataForAverage({
+        url: analysis.url,
+        name: analysis.name,
+        method: analysis.method,
+        description: analysis.description,
+      });
+    }
+    console.log(averageList);
+  };
+
+  const handleDeleteFromAverage = (id: string) => {
+    let filteredAverageList = averageList.filter(analysis => analysis.id !== id);
+    setAverageList(filteredAverageList);
+  };
+
+  async function sendAverage(
+    dataForAverage: {
+      url: string;
+      name: string;
+      method: string;
+      description: string;
+    },
+    averageList: IHistory[],
+  ) {
+    await axios
+      .post('http://localhost:5000/analyzer/average', {
+        ids: averageList.map(item => item.id),
+        url: dataForAverage.url,
+        name: dataForAverage.name,
+        method: dataForAverage.method,
+        description: dataForAverage.description,
+      })
+      .then((response: any) => {
+        updateHistory();
+        setAverageList([]);
+      });
+  }
 
   const metricsTable = [
     {
@@ -568,13 +633,125 @@ export default function Home({ params: { locale } }: { params: { locale: string 
             </Table>
           </div>
           <div className="rounded-md border p-4">
-            <h2 className="font-bold text-xl text-center">
-              {dictionary.page.analysis_history}{' '}
-              <Button onClick={() => handleConvertToCSV()}>
-                <Download className="mr-2 h-4 w-4" />
-                {dictionary.page.download_csv}
-              </Button>
-            </h2>
+            <div className="flex justify-center gap-2">
+              <h2 className="font-bold text-xl text-center">
+                {dictionary.page.analysis_history}{' '}
+                <Button onClick={() => handleConvertToCSV()}>
+                  <Download className="mr-2 h-4 w-4" />
+                  {dictionary.page.download_csv}
+                </Button>
+              </h2>
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button>{dictionary.page.computeAverages}</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>{dictionary.page.averageCalculationPanel}</DialogTitle>
+                  </DialogHeader>
+                  <div className="grid grid-cols-4 items-center gap-2">
+                    <Label htmlFor="name">{dictionary.page.enter_nameOfTheSite}</Label>
+                    <Input
+                      id="name"
+                      placeholder={dictionary.page.enter_nameOfTheSite}
+                      value={dataForAverage.name}
+                      onChange={handleChangeAverage('name')}
+                      className="mb-2 col-span-3"
+                    ></Input>
+                    <Label htmlFor="method">{dictionary.page.enter_method}</Label>
+                    <Input
+                      id="method"
+                      placeholder={dictionary.page.enter_method}
+                      value={dataForAverage.method}
+                      onChange={handleChangeAverage('method')}
+                      className="mb-2 col-span-3"
+                    ></Input>
+                    <Label htmlFor="description">{dictionary.page.enter_description}</Label>
+                    <Input
+                      id="description"
+                      placeholder={dictionary.page.enter_description}
+                      value={dataForAverage.description}
+                      onChange={handleChangeAverage('description')}
+                      className="mb-2 col-span-3"
+                    ></Input>
+                    <Label htmlFor="url">{dictionary.page.enter_url}</Label>
+                    <Input
+                      id="url"
+                      placeholder={dictionary.page.enter_url}
+                      value={dataForAverage.url}
+                      onChange={handleChangeAverage('url')}
+                      className="mb-2 col-span-3"
+                    ></Input>
+                  </div>
+                  <ScrollArea className="h-[300px] p-4">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>{dictionary.page.url}</TableHead>
+                          <TableHead>{dictionary.page.nameOfTheSite}</TableHead>
+                          <TableHead>{dictionary.page.method}</TableHead>
+                          <TableHead>{dictionary.page.description}</TableHead>
+                          <TableHead>{dictionary.page.score_table}</TableHead>
+                          <TableHead>{dictionary.page.timestamp}</TableHead>
+                          <TableHead className="text-right">
+                            {dictionary.page.selectForAveraging}
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {history.map((analysis, index) => {
+                          let filteredAverageList = averageList.filter(
+                            record => record.id == analysis.id,
+                          );
+                          let addButtonAverage = false;
+                          if (JSON.stringify(filteredAverageList) == JSON.stringify([])) {
+                            addButtonAverage = true;
+                          }
+                          return (
+                            <TableRow key={index}>
+                              <TableCell className="font-medium">{analysis.url}</TableCell>
+                              <TableCell>{analysis.name}</TableCell>
+                              <TableCell>{analysis.method}</TableCell>
+                              <TableCell>{analysis.description}</TableCell>
+                              <TableCell>{analysis.analyzeScore}</TableCell>
+                              <TableCell>
+                                {moment(analysis.createdAt).format('DD.MM.YYYY hh:mm:ss')}
+                              </TableCell>
+
+                              <TableCell className="text-right">
+                                {addButtonAverage ? (
+                                  <Button onClick={() => handleAddToAverage(analysis.id)}>
+                                    {dictionary.page.select}
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    variant="destructive"
+                                    onClick={() => handleDeleteFromAverage(analysis.id)}
+                                  >
+                                    {dictionary.page.deselect}
+                                  </Button>
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </ScrollArea>
+                  <DialogFooter>
+                    <Button
+                      type="submit"
+                      onClick={() => {
+                        sendAverage(dataForAverage, averageList);
+                      }}
+                    >
+                      {dictionary.page.submit}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
 
             <ScrollArea className="h-[400px] p-4">
               <Table>

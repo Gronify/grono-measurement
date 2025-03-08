@@ -5,6 +5,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { MeasurementDto } from 'src/measurement/dto/measurement.dto';
 
+interface AverageAnalysisParams {
+  ids: number[];
+  url: string;
+  name: string;
+  method: string;
+  description: string;
+}
+
 @Injectable()
 export class AnalyzerService {
   constructor(
@@ -98,5 +106,60 @@ export class AnalyzerService {
         if (error.code === 'P2002') throw new BadRequestException('taken');
       }
     }
+  }
+
+  async createAverageAnalysis({
+    ids,
+    url,
+    name,
+    method,
+    description,
+  }: AverageAnalysisParams): Promise<any> {
+    const analyses = await this.prisma.analyze.findMany({
+      where: { id: { in: ids } },
+    });
+
+    const first = analyses[0];
+
+    const metricKeys = [
+      'firstContentfulPaint',
+      'largestContentfulPaint',
+      'speedIndex',
+      'totalBlockingTime',
+      'maxPotentialFid',
+      'cumulativeLayoutShift',
+      'serverResponseTime',
+      'timeToInteractive',
+      'metrics',
+      'analyzeScore',
+    ] as const;
+
+    const averages = metricKeys.reduce(
+      (acc, key) => {
+        const sum = analyses.reduce((sum, a) => sum + a[key], 0);
+        acc[key] = sum / analyses.length;
+        return acc;
+      },
+      {} as Record<(typeof metricKeys)[number], number>,
+    );
+
+    return this.prisma.analyze.create({
+      data: {
+        url,
+        name,
+        method,
+        description,
+        ...averages,
+        weightFirstContentfulPaint: first.weightFirstContentfulPaint,
+        weightLargestContentfulPaint: first.weightLargestContentfulPaint,
+        weightSpeedIndex: first.weightSpeedIndex,
+        weightTotalBlockingTime: first.weightTotalBlockingTime,
+        weightMaxPotentialFid: first.weightMaxPotentialFid,
+        weightCumulativeLayoutShift: first.weightCumulativeLayoutShift,
+        weightServerResponseTime: first.weightServerResponseTime,
+        weightTimeToInteractive: first.weightTimeToInteractive,
+        weightMetrics: first.weightMetrics,
+      },
+    });
   }
 }
