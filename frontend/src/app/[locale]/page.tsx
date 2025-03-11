@@ -162,6 +162,8 @@ export default function Home({ params: { locale } }: { params: { locale: string 
     description: '',
   });
 
+  const [numRecords, setNumRecords] = useState(1);
+
   const handleChange = (prop: any) => (event: any) => {
     setDataForResearch({ ...dataForResearch, [prop]: event.target.value });
     if (prop == 'numberOfIterations') {
@@ -358,7 +360,7 @@ export default function Home({ params: { locale } }: { params: { locale: string 
 
   const handleAddToAverage = (id: string) => {
     const indexOfAnalysisToAdd = history.findIndex(analysis => analysis.id === id);
-    let filteredAverageList = compareList.filter(analysis => analysis.id == id);
+    let filteredAverageList = averageList.filter(analysis => analysis.id == id);
     if (JSON.stringify(filteredAverageList) == JSON.stringify([])) {
       setAverageList(averageList => [...averageList, history[indexOfAnalysisToAdd]]);
       let analysis = history[indexOfAnalysisToAdd];
@@ -375,6 +377,18 @@ export default function Home({ params: { locale } }: { params: { locale: string 
   const handleDeleteFromAverage = (id: string) => {
     let filteredAverageList = averageList.filter(analysis => analysis.id !== id);
     setAverageList(filteredAverageList);
+  };
+
+  const addLastNRecordsToAverage = (n: number) => {
+    const lastNRecords = history.slice(0, n);
+
+    lastNRecords.forEach(record => {
+      handleAddToAverage(record.id);
+    });
+  };
+
+  const handleDeleteAllFromAverage = () => {
+    setAverageList([]);
   };
 
   async function sendAverage(
@@ -685,6 +699,25 @@ export default function Home({ params: { locale } }: { params: { locale: string 
                       onChange={handleChangeAverage('url')}
                       className="mb-2 col-span-3"
                     ></Input>
+
+                    <Input
+                      type="number"
+                      min="1"
+                      placeholder={dictionary.page.enter_url}
+                      value={numRecords}
+                      onChange={e => setNumRecords(Number(e.target.value))}
+                      className="mb-2 col-span-3"
+                    ></Input>
+
+                    {averageList.length > 0 ? (
+                      <Button variant="destructive" onClick={() => handleDeleteAllFromAverage()}>
+                        {dictionary.page.deselect}
+                      </Button>
+                    ) : (
+                      <Button onClick={() => addLastNRecordsToAverage(numRecords)}>
+                        {dictionary.page.select}
+                      </Button>
+                    )}
                   </div>
                   <ScrollArea className="h-[300px] p-4">
                     <Table>
