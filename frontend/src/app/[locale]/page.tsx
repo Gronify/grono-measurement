@@ -182,7 +182,7 @@ export default function Home({ params: { locale } }: { params: { locale: string 
   const updateHistory = () => {
     axios
       .get(`${API}/analyzer/analyzes`, {
-        params: { limit: 1000 },
+        params: { limit: 2000 },
       })
       .then((response: any) => {
         if (response.data != '') {
